@@ -4,8 +4,12 @@ from peewee import *
 from app import db
 from app.model.questions import Question
 
+# every answer will contain every type of answer field and the type 
+# based upon the type the contain of the answer will be filled out. 
+# 
 
 class Answer(Model):
+    type = Enum()
     content = CharField()
     question_id = ForeignKeyField(Question, to_field='id', related_name='response')
 
