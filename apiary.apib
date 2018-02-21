@@ -3,7 +3,27 @@ HOST: http://polls.apiblueprint.org/
 
 # QuizzyBackEnd
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+This is the backend for Quizzy an api for making and taking quizzes. 
+
+## User Collection [/user]
+
+### Create User [Post]
+
++ Request (application/json)
+
+    + Body 
+    {
+        "username" : "me",
+        "password": "me"
+    }
+
++ Response 200 (application/json)
+
+    + Body
+    {
+        "id": 1
+    }
+
 
 ## Questions Collection [/questions]
 
