@@ -30,7 +30,7 @@ __question_text is the text of the question__
 __answers are basically templates for all questions  this is defined by the quiz creator__
 * table id 
 * answer type (_boolean_ _multiple choice_ _open response_)
-* answer text to be parsed (<multiple choice A text>, <multiple choice B text>, <multiple choice C text>)
+* answer text to be parsed (\<multiple choice A text\>, \<multiple choice B text>, <multiple choice C text\>)
 
 ## Response
 __answer response__
