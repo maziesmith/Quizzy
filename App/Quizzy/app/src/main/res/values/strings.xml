@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Quizzy</string>
+    <string name="question_hint">Question</string>
+    <string name="response_hint">Response</string>
 </resources>
