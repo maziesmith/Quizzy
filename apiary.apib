@@ -1,80 +1,322 @@
 FORMAT: 1A
 HOST: http://polls.apiblueprint.org/
+# Quizzy 
+    An Api for taking quizzes this is version .00 of the api
 
-# QuizzyBackEnd
 
-Polls is a simple API allowing consumers to view polls and vote in them.
+# User
+ The users of the application create update query 
+# Quiz
+ The quizes users answer on this application 
+# Question
+ The questions of the Quiz
+# Text 
+ The Text of the Questions 
+# Answer
+ The Answers of the Questions
 
-## Questions Collection [/questions]
-
-### List All Questions [GET]
+## Users Collection [/users]
+### Create a User [POST]
++ Request (application/json)
+   + Body 
+      {
+         "username" : "me",
+         "password" : "me"
+      }
 
 + Response 200 (application/json)
 
-        [
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 2048
-                    }, {
-                        "choice": "Python",
-                        "votes": 1024
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 512
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 256
-                    }
-                ]
-            }
-        ]
+    + Body
 
-### Create a New Question [POST]
+    {"id": 1,
+    "username" : "me"}
 
-You may create your own question using this action. It takes a JSON
-object containing a question and a collection of answers in the
-form of choices.
+### Get Users Quizes [GET]
++ Response 200 (application/json)
++ Body 
+
+    {
+        {"My Quizzes" :
+            [{"id" : 1, "Title" : "dog or Cat"},
+             {"id" : 10, "Title" : "quiz questions"}],
+        "Quizzes Im taking" :
+            [{"id" : 3, "Title" : "Quiz Im taking"}]
+        }
+    }
+
+### Update User Password[PUT]
 
 + Request (application/json)
 
-        {
-            "question": "Favourite programming language?",
-            "choices": [
-                "Swift",
-                "Python",
-                "Objective-C",
-                "Ruby"
-            ]
-        }
-
-+ Response 201 (application/json)
-
-    + Headers
-
-            Location: /questions/2
+    + Body
+    {
+        {"username" : "me",
+        "password" : "me",
+        "newpassword" : "not-me"}
+    }
+    
++ Response 200 (application/json)
 
     + Body
+    {
+        {"id": 1,
+        "username": "me"}
+    }
+    
 
-            {
-                "question": "Favourite programming language?",
-                "published_at": "2015-08-05T08:40:51.620Z",
-                "choices": [
-                    {
-                        "choice": "Swift",
-                        "votes": 0
-                    }, {
-                        "choice": "Python",
-                        "votes": 0
-                    }, {
-                        "choice": "Objective-C",
-                        "votes": 0
-                    }, {
-                        "choice": "Ruby",
-                        "votes": 0
-                    }
-                ]
-            }
+### Delete User [DELETE]
++ Request (application/json)
+    + Body 
+    {
+        {"username" : "me",
+        "password" : "me"}
+    }
++Response 200 (application/json)
+    + Body 
+    {
+        {"username" : "me",
+        "DELETED" : "Yes"}
+    }
+
+
+
+## Question Collection [/question]
+### Create Question[POST]
++ Request
++ Body 
+
+    {
+        {
+            "text" : {"id" : 11,
+                      "text" : "this is a type of cat?"}
+            "answer":[{"id" : 20, "No"},
+                      {"id" : 21, "Yes"}]
+        }
+    }
+
+## Question Collection By ID [/question/{id}]
+### Get Question[GET]
++ Parameters
++ id (required, number, `1`) 
++ Response 200 (application/json)
++ Body 
+
+{
+    {"text" : "is this a cat?",
+     "answer": "No this is a dog."
+     "quizid": 2
+    }
+}
+
+### Update Question [PUT]
++ Parameters
++ id (required, number, `1`) 
++ Request
++ Body 
+
+{
+    {
+    "change" : "text",
+    "to" : "newText",
+    "UserId" : 12
+    }
+}
+
+### Delete Question [DELETE]
++ Request
++ Body 
+{
+    {
+    "id" : 12,
+    "userId" : 11
+    }
+}
++ Response 
++ Body 
+{
+    {
+        "id" : 12,
+        "DELETED" : "Yes"
+    }
+}
+
+## Text Collection [/qtext]
+### Get Text [GET]
++ Parameters
++ id (required, number, `1`) 
++ Response 
++ Body 
+{
+    {"id": 11,
+    "text" : "do dogs really "\hate"\ cats?"}
+}
+
+### Create Text [POST]
++ Parameters
++ id (required, number, `1`) 
++ Request 
++ Body 
+{
+    {
+    "text" : "do dogs really "\hate"\ cats?",
+    "quizid" : 2
+    }
+}
+
++ Response 
++ Body 
+{
+    {"id" : 11,
+    "text" : "do dogs really "\hate"\ cats?",
+    "quizid" : 2
+    }
+}
+
+### Update Text [PUT]
++ Parameters
++ id (required, number, `1`) 
++ Request 
++ Body 
+{
+    {"id" : 11,
+     "newText" : " this text will replace the old"
+    }
+}
++ Response 
++ Body 
+{
+    {
+    "id" : 11
+    "text" : "this text will replace the old"
+    }
+}
+
+### Delete Text [DELETE]
++ Response 
++ Body 
+{
+    {"id" : 11,
+    "DELETED" : "Yes"
+    }
+}
+
+
+## Answer Collection [/qanswer]
+### Create Answer [POST]
+
++ Response 
++ Body 
+{
+    {
+        "id" : 1,
+        "Answer" : "this is an answer No dogs or cats"
+        "user" : "me"
+    }
+}
+
+## Answer By ID [/qanswer/{id}]
++ Parameters
+    + id (required, number, `1`) 
+    
+### Get Answer [GET]
++ Response 
++ Body 
+{
+    {
+        "id" : 1,
+        "Answer" : "No cats"
+        "userid" : 1
+        "questionid" : 12
+    }
+}
+
+
+### Update Answer Text [PUT]
++ Request
++ Body 
+{
+    {
+        "NewAnswer" : " No dogs"
+        "userid" : 1
+    }
+}
+
++ Response 
++ Body 
+{
+    {
+        "id" : 1
+        "Answer" : No dogs"
+    }
+}
+
+### Delete Answer [DELETE]
++ Request
++ Body 
+{
+    {
+        "userid" : 1
+    }
+}
+
++ Response 
++ Body 
+{
+    {
+        "id" : 1
+        "DELTED" : "Yes"
+    }
+}
+
+## Quiz Collection [/quiz]
+### Get All Quizes[GET]
++ Response 200 (application/json)
++ Body
+    [{"id" : 1,
+      "Title" : "Dogs or Dawg"}.
+      {"id" : 2,
+      "Title" : "Kitties or Kitty"},
+      {"id" : 3,
+      "Title" : "Puppies or pound"}
+    ]
+    
+
+### Create Quiz[POST]
++ Request (application/json)
++ Body 
+{
+    {
+    "username" : 12,
+    "Title" : "dawgs and kitties"
+    }
+}
+
+##Quiz by ID [/quiz/{id}]
+
++ Parameters
+    + id (required, number, `1`) 
+
+
+
+### Get Quiz[GET]
++ Response 200 (application/json)
+
++ Body 
+{
+    [{"questiontext":{"id" : 1, "text" : "what is cat?"}
+      "answers" :["dog", "cat", "pet", "dog" ]},
+     {"questiontext":{"id" : 1, "text" : "what is dog?"}
+      "answers" :["dog", "cat", "pet", "dog" ]}]
+}    
+
+### Update Questions[PUT]
++ Request 
++ Body 
+{
+    {
+        "id" : 2,
+        "addquestions" : [{"id" : 11}, {"id" : 13} ],
+        "removequestion" : [{"id" : 1}, {"id" : 3}, {"id" : 2}],
+        "userid" 2
+    }
+}
