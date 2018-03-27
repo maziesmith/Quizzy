@@ -24,9 +24,16 @@ public class MenuItem {
         return surveyname;
     }
 
+    public MenuItem(String surveyname, int surveyid) {
+        this.surveyname = surveyname;
+        this.surveyid = surveyid;
+    }
+
     public int getSurveyId() {
         return surveyid;
     }
+
+
 
 }
 

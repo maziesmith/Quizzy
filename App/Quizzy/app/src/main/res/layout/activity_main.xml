@@ -5,26 +5,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ScrollView01"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/allSurveys"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/all_surveys"
+            android:textSize="24sp"
+            tools:text="All Surveys" />
 
-            <TextView
-                android:id="@+id/allSurveys"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/all_surveys"
-                android:textSize="24sp"
-                tools:text="All Surveys" />
+        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/menuList"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:drawSelectorOnTop="true"/>
 
-
-
-        </LinearLayout>
-    </ScrollView>
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
