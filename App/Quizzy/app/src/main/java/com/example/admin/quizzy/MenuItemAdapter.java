@@ -1,7 +1,6 @@
 package com.example.admin.quizzy;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,9 +37,10 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         mmTextView.setText(currentItem.getSurveyId());
 
         // Handle edit button
-        ImageView imageView = (ImageView) listItemView.findViewById(R.id.image);
+        ImageView editButton = (ImageView) listItemView.findViewById(R.id.menuEditButton);
 
         //handle delete button
+        ImageView deleteButton = (ImageView) listItemView.findViewById(R.id.menuDeleteButton);
 
         return listItemView;
     }
