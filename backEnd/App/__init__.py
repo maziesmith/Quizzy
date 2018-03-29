@@ -1,12 +1,14 @@
-# from flask import Flask
-# from flask_cors import CORS
+from flask import Flask
+from flask_cors import CORS
 from peewee import MySQLDatabase
 
 import config
 
 
+################ database and models #########################
+App = Flask(__name__)
+cors = CORS(App, resources={r"/*": {"origins": "*"}})
 
-# app = Flask(__name__)
 # host=config.DB_LOCATION port=config.DB_PORT
 db = MySQLDatabase(
     database=config.DB_NAME,
@@ -27,3 +29,12 @@ db.create_tables(
 	 Quiz,
 	 QuestionText,
 	 QuestionAnswer], safe = True)
+
+
+
+
+################ Routes #####################################
+
+from App.control.User import user
+App.register_blueprint(user)
+

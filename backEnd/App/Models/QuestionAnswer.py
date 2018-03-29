@@ -23,8 +23,8 @@ class QuestionAnswer(Model):
 
     def to_dict(self):
         JsonData = dict()
-        JsonData.update(self.__dict__["_data"])
-        JsonData.update(self.__dict__["_obj_cache"])
+        JsonData.update(self.__dict__["__data__"])
+        # JsonData.update(self.__dict__["_obj_cache"])
         return JsonData
 
     class Meta:
