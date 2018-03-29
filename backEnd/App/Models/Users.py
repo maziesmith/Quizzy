@@ -22,7 +22,7 @@ class User(Model):
     def to_dict(self):
         JsonData = dict()
         JsonData.update(self.__dict__["__data__"])
-        # JsonData.update(self.__dict__["_obj_cache"])
+        JsonData.pop("password")
         return JsonData
 
     class Meta:
