@@ -3,4 +3,5 @@
     <string name="question_hint">Question</string>
     <string name="response_hint">Response</string>
     <string name="all_surveys">All Surveys</string>
+    <string name="Login">Log In</string>
 </resources>
