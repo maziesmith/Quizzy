@@ -8,9 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import butterknife.ButterKnife;
+import butterknife.BindView;
 
 /**
  * Created by probu on 3/20/2018.
@@ -18,10 +21,20 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    // binding the listview, must do outside of onCreate
+    @BindView(R.id.menuList) ListView _listView;
+
+    // binding edit button
+    @BindView(R.id.menuEditButton) ImageView editButton;
+
+    // binding delete button
+    @BindView(R.id.menuDeleteButton) ImageView deleteButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -33,24 +46,17 @@ public class MainActivity extends AppCompatActivity {
         // Create the adapter
         MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
 
-        // find the listview
-        ListView listView = (ListView) rootView.findViewById(R.id.menuList);
-
         // set adapter for listview
-        listView.setAdapter(adapter);
+        _listView.setAdapter(adapter);
 
-        // onclick for the list will bring up edit and delete buttons
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        populateMenu(_listView, menuItems);
+
+        // TODO: click on item opens the survey
+        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // find the item
-
-                // show the images
-
-                // set the onclick event for edit button
-
-                // set the onclick event for delete button
-
+                // get the survey
+                // set new intent for the survey
             }
         });
 
@@ -61,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
     public MainActivity() {
         // Required empty public constructor
+    }
+
+    // TODO: populate the listview
+    public void populateMenu(ListView listView, ArrayList<MenuItem> menuItems){
+        
     }
 
 
