@@ -3,4 +3,12 @@
     <string name="question_hint">Question</string>
     <string name="response_hint">Response</string>
     <string name="all_surveys">All Surveys</string>
+    <string name="Login">Log In</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="signup_reminder_string">Create an account</string>
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_a_member_log_in">Already a member? Log in</string>
 </resources>
