@@ -20,58 +20,54 @@ import butterknife.BindView;
  */
 
 public class MainActivity extends AppCompatActivity {
-
-    // binding the listview, must do outside of onCreate
-    @BindView(R.id.menuList) ListView _listView;
-
-    // binding edit button
-    @BindView(R.id.menuEditButton) ImageView editButton;
-
-    // binding delete button
-    @BindView(R.id.menuDeleteButton) ImageView deleteButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
     }
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.activity_main, container, false);
 
         // Create a list of surveys
-        ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+        final ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+
+        // fill the menuItems list with stuff
+        //populate(menuItems);
+        menuItems.add(new MenuItem("New Survey", 100));
+        menuItems.add(new MenuItem("Survey", 101));
+        menuItems.add(new MenuItem("vey", 102));
+        menuItems.add(new MenuItem("ey", 103));
+        menuItems.add(new MenuItem("vey", 104));
+        menuItems.add(new MenuItem("Survey", 105));
 
         // Create the adapter
         MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
 
+        // bind the view
+        ListView _listView = (ListView) rootView.findViewById(R.id.menuList);
+
         // set adapter for listview
         _listView.setAdapter(adapter);
 
-        populateMenu(_listView, menuItems);
-
-        // TODO: click on item opens the survey
-        _listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // get the survey
+                // get the survey name
                 // set new intent for the survey
             }
-        });
+        });*/
 
         return rootView;
     }
-
-
 
     public MainActivity() {
         // Required empty public constructor
     }
 
     // TODO: populate the listview
-    public void populateMenu(ListView listView, ArrayList<MenuItem> menuItems){
-        
+    public void populate(ArrayList<MenuItem> menuItems){
+
     }
 
 

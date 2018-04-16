@@ -20,19 +20,18 @@ public class MenuItem {
     private String surveyname;
     private int surveyid;
 
-    public String getSurveyName(){
-        return surveyname;
-    }
-
     public MenuItem(String surveyname, int surveyid) {
         this.surveyname = surveyname;
         this.surveyid = surveyid;
     }
 
+    public String getSurveyName(){
+        return surveyname;
+    }
+
     public int getSurveyId() {
         return surveyid;
     }
-
 
 
 }

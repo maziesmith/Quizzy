@@ -23,26 +23,20 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Check if an existing view is being reused, otherwise inflate the view
-        View listItemView = convertView;
-        if (listItemView == null) {
-            listItemView = LayoutInflater.from(getContext()).inflate(
+        View v = convertView;
+        if (v == null) {
+            v = LayoutInflater.from(getContext()).inflate(
                     R.layout.menu_list_item, parent, false);
         }
 
-        // Get the {@link Song} object located at this position in the list
+        // Get the object located at this position in the list
         MenuItem currentItem = getItem(position);
 
-        // Handle song name
-        TextView mmTextView = (TextView) listItemView.findViewById(R.id.menuItemTitle);
-        mmTextView.setText(currentItem.getSurveyId());
+        // Handle name
+        TextView mmTextView = (TextView) v.findViewById(R.id.menuItemTitle);
+        mmTextView.setText(currentItem.getSurveyName());
 
-        // Handle edit button
-        ImageView editButton = (ImageView) listItemView.findViewById(R.id.menuEditButton);
-
-        //handle delete button
-        ImageView deleteButton = (ImageView) listItemView.findViewById(R.id.menuDeleteButton);
-
-        return listItemView;
+        return v;
     }
 
 }

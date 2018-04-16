@@ -73,7 +73,6 @@ public class SignupActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // TODO: database/logic for sign in
                         signupSuccess();
                         progressDialog.dismiss();
                     }
@@ -95,39 +94,49 @@ public class SignupActivity extends AppCompatActivity {
         _signupButton.setEnabled(true);
     }
 
-    // check input for signing up
-    // criteria:
-    // name > 3 chars
-    // email is an email with @ and everything
-    // password between 6 and 30 chars
-    public boolean checkForValidInput() {
-        boolean valid = true;
-
+    // check if name is valid before sending request
+    public boolean checkName(){
         String name = _nameView.getText().toString();
-        String email = _emailView.getText().toString();
-        String password = _passwordView.getText().toString();
-
         if (name.isEmpty() || name.length() < 3) {
             _nameView.setError("at least 3 characters");
-            valid = false;
+            return false;
         } else {
             _nameView.setError(null);
+            return true;
         }
+    }
 
+    // check if email is valid before sending request
+    public boolean checkEmail(){
+        String email = _emailView.getText().toString();
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _emailView.setError("enter a valid email address");
-            valid = false;
+            return false;
         } else {
             _emailView.setError(null);
+            return true;
         }
+    }
+
+    // check if password is valid before sending request
+    public boolean checkPassword(){
+        String password = _passwordView.getText().toString();
 
         if (password.isEmpty() || password.length() < 6 || password.length() > 30) {
             _passwordView.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
+            return false;
         } else {
             _passwordView.setError(null);
+            return true;
         }
+    }
 
-        return valid;
+    // check input for signing up
+    public boolean checkForValidInput() {
+        if (checkName() && checkEmail() && checkPassword()){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

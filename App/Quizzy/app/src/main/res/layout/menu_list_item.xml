@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/menuItemTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:maxLength="19"
         tools:text="menu item title"
@@ -16,21 +16,5 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:layout_weight="2"/>
-
-    <ImageView
-        android:id="@+id/menuEditButton"
-        android:layout_width="20dp"
-        android:layout_height="22dp"
-        android:paddingTop="7dp"
-        android:src="@drawable/edit_button"
-        android:layout_weight=".25"/>
-
-    <ImageView
-        android:id="@+id/menuDeleteButton"
-        android:layout_width="20dp"
-        android:layout_height="22dp"
-        android:paddingTop="7dp"
-        android:layout_weight=".25"
-        android:src="@drawable/delete_button" />
 
 </LinearLayout>
