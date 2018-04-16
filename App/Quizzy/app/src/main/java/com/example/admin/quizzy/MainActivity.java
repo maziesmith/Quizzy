@@ -24,10 +24,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-    }
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.activity_main, container, false);
 
         // Create a list of surveys
         final ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
@@ -45,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
 
         // bind the view
-        ListView _listView = (ListView) rootView.findViewById(R.id.menuList);
+        ListView _listView = (ListView) findViewById(R.id.menuList);
 
         // set adapter for listview
         _listView.setAdapter(adapter);
@@ -57,8 +53,6 @@ public class MainActivity extends AppCompatActivity {
                 // set new intent for the survey
             }
         });*/
-
-        return rootView;
     }
 
     public MainActivity() {
