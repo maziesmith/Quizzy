@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
  * Created by Admin on 3/19/2018.
  */
 
-public class CreateSurveyActivity extends AppCompatActivity {
+public class CreateSurveyActivity extends AppCompatActivity implements AddSurveyItemDialog.AddSurveyItemDialogListener{
 
     SurveyItemAdapter _adapter;
 
@@ -30,17 +31,20 @@ public class CreateSurveyActivity extends AppCompatActivity {
         _adapter = new SurveyItemAdapter(this, new ArrayList<SurveyItem>());
         ListView surveyList = findViewById(R.id.surveyEditList);
         surveyList.setAdapter(_adapter);
+        //surveyList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
 
         FloatingActionButton addButton = findViewById(R.id.surveyAddItemButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<SurveyItem> a = new ArrayList<SurveyItem>();
+/*                ArrayList<SurveyItem> a = new ArrayList<SurveyItem>();
                 a.add(new SurveyItem("How was your day?", new String[]{"Hello"}));
-                a.add(new SurveyItem("What time is it?", new String[]{"Hello"}));
+                a.add(new SurveyItem("What time is it?", new String[]{"Hello", "Goodbye"}));
                 a.add(new SurveyItem("What are you up to?", new String[]{"Hello"}));
 
-                _adapter.addAll(a);
+                _adapter.addAll(a);*/
+                AddSurveyItemDialog dialog = new AddSurveyItemDialog();
+                dialog.show(getSupportFragmentManager(), "AddItem");
             }
         });
     }
@@ -63,5 +67,19 @@ public class CreateSurveyActivity extends AppCompatActivity {
             }
         }
         return super.dispatchTouchEvent( event );
+    }
+
+    @Override
+    public void onOpenResponseClick(DialogFragment dialog) {
+        SurveyItem newItem = new SurveyItem(1);
+        _adapter.add(newItem);
+    }
+
+    @Override
+    public void onTrueFalseClick(DialogFragment dialog) {
+        SurveyItem newItem = new SurveyItem(2);
+        newItem.setResponse(0, "True");
+        newItem.setResponse(1, "False");
+        _adapter.add(newItem);
     }
 }

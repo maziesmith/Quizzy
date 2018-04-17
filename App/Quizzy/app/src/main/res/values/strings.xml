@@ -2,6 +2,8 @@
     <string name="app_name">Quizzy</string>
     <string name="question_hint">Question</string>
     <string name="response_hint">Response</string>
+    <string name="open_response_hint">Open Response</string>
+    <string name="add_item_dialog_title">Choose Question Type</string>
     <string name="all_surveys">All Surveys</string>
     <string name="Login">Log In</string>
     <string name="password">Password</string>
