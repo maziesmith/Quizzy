@@ -1,303 +1,384 @@
 {
-	"id": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-	"name": "Quizzy",
-	"description": "",
-	"order": [
-		"526d27f0-dc3c-e7fc-f7e4-030defd489eb",
-		"55f44709-cfae-a5a8-e65d-de7bf592a205",
-		"63cba5f6-1de3-488a-01cc-2e5c2a12cc5f",
-		"10d6e6ca-cb6f-6fd6-f911-b1e314dd326b",
-		"436c32e1-8cd6-f7f0-7117-c6ecafe36e81",
-		"fc9ade23-baba-abd6-7130-c67b841de982",
-		"f39fcafd-e8ab-04cd-017d-4773335b65d1",
-		"b6850c06-6ef5-26c7-4f4d-077582225802",
-		"a18d1777-ac14-d6ca-facf-db3e30524434",
-		"7961e506-8661-fcfd-62ab-a16e69b34d30"
-	],
-	"folders": [],
-	"folders_order": [],
-	"timestamp": 1521482543805,
-	"owner": "3258071",
-	"public": false,
-	"requests": [
+	"info": {
+		"name": "Quizzy",
+		"_postman_id": "a08108db-3dd6-84cc-09fa-7d7044785e17",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "10d6e6ca-cb6f-6fd6-f911-b1e314dd326b",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/quiz",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "PUT",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": [],
-			"dataMode": "raw",
-			"name": "update of a quiz",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1523156856866,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"rawModeData": "{\n\t\"newquizname\" : \"coolguyquiz\",\n\t\"quizname\":\"dogs\"\n\t\n}"
-		},
-		{
-			"id": "436c32e1-8cd6-f7f0-7117-c6ecafe36e81",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/questiontext",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1523291645172,
-			"name": "createanswertext",
-			"description": "",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"responses": [],
-			"rawModeData": "{\n\t\"quizid\" : 1,\n\t\"questiontext\" : \"this is my question\"\n}"
-		},
-		{
-			"id": "526d27f0-dc3c-e7fc-f7e4-030defd489eb",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://quizzybackend.herokuapp.com/user",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1523839371732,
 			"name": "QuizzyCreateUser",
-			"description": "",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"responses": [],
-			"rawModeData": "{\"username\" : \"questionor\",\n\"password\" : \"poop\"}"
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"username\" : \"questionor\",\n\"password\" : \"poop\"}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/user",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"user"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "55f44709-cfae-a5a8-e65d-de7bf592a205",
-			"headers": "",
-			"headerData": [],
-			"url": "",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "GET",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": null,
-			"dataMode": "params",
 			"name": "QuizzyLogin",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1522342335138,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {}
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\":\"jacob\",\n\t\"password\":\"montpetit\"\n}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/user/login",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"user",
+						"login"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "63cba5f6-1de3-488a-01cc-2e5c2a12cc5f",
-			"headers": "",
-			"headerData": [],
-			"url": "",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "GET",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": null,
-			"dataMode": "params",
 			"name": "QuizzyQuizGet",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1522344697055,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {}
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": ""
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "7961e506-8661-fcfd-62ab-a16e69b34d30",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/questionanswer",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "PUT",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1523378279452,
-			"name": "quizzy update anser by id ",
-			"description": "",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"responses": [],
-			"rawModeData": "{\n\t\"newanswertext\": \"this is a new anwser\",\n}"
+			"name": "update of a quiz",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newquizname\" : \"coolguyquiz\",\n\t\"quizname\":\"dogs\"\n\t\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/quiz",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"quiz"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "a18d1777-ac14-d6ca-facf-db3e30524434",
-			"headers": "",
-			"headerData": [],
-			"url": "http://127.0.0.1:5000/questionanswer/1",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "GET",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": null,
-			"dataMode": "params",
-			"name": "quizzy get all answers for a question ",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1523298738708,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {}
+			"name": "createquestiontext",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"quizid\" : 12,\n\t\"questiontext\": \"what is postmodernism?\"\n}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/quiz/questiontext",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"quiz",
+						"questiontext"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		},
 		{
-			"id": "b6850c06-6ef5-26c7-4f4d-077582225802",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/quiz/questionanswer",
-			"queryParams": [],
-			"preRequestScript": null,
-			"pathVariables": {},
-			"pathVariableData": [],
-			"method": "POST",
-			"data": [],
-			"dataMode": "raw",
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1523674136609,
-			"name": "createAnswer",
-			"description": "",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"responses": [],
-			"rawModeData": "{\n\t\"userid\" : 2,\n\t\"questiontextid\" : 2,\n\t\"answertext\" : \"tom\"\n}"
-		},
-		{
-			"id": "f39fcafd-e8ab-04cd-017d-4773335b65d1",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/quiz",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "POST",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": [],
-			"dataMode": "raw",
-			"name": "create quiz ",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1523291569289,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"rawModeData": "{\n\t\"quizname\" : \"this thing sucks\",\n\t\"username\" : \"farts\"\n}"
-		},
-		{
-			"id": "fc9ade23-baba-abd6-7130-c67b841de982",
-			"headers": "Content-Type: application/json\n",
-			"headerData": [
-				{
-					"key": "Content-Type",
-					"value": "application/json",
-					"description": "",
-					"enabled": true
-				}
-			],
-			"url": "http://127.0.0.1:5000/questiontext",
-			"queryParams": [],
-			"pathVariables": {},
-			"pathVariableData": [],
-			"preRequestScript": null,
-			"method": "PUT",
-			"collectionId": "a08108db-3dd6-84cc-09fa-7d7044785e17",
-			"data": [],
-			"dataMode": "raw",
 			"name": "quizzy update questiontext ",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1523247862092,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"rawModeData": "{\n\t\"id\" : 1,\n\t\"newtext\": \"now this is a question?\"\n}"
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\" : 1,\n\t\"newtext\": \"now this is a question?\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/questiontext",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"questiontext"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "create quiz ",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"quizname\" : \"the quiz to end all!\",\n\t\"userid\" : \"2\"\n}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/quiz",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"quiz"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "createAnswer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userid\" : 2,\n\t\"questiontextid\" : 2,\n\t\"answertext\" : \"everything\"\n}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/quiz/questionanswer",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"quiz",
+						"questionanswer"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "quizzy get all answers for a question ",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/questionanswer/1",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"questionanswer",
+						"1"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "quizzy update anser by id ",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"newanswertext\": \"this is a new anwser\",\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/questionanswer",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"questionanswer"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "quiz/all",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/quiz/all",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"quiz",
+						"all"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "QuizzyLogin",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"frank\",\n\t\"password\": \"fuckyou\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/user/login",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"user",
+						"login"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "user/logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\" : \"jacob\",\n\t\"password\" :\"montpetit\"\n}"
+				},
+				"url": {
+					"raw": "http://quizzybackend.herokuapp.com/user/logout",
+					"protocol": "http",
+					"host": [
+						"quizzybackend",
+						"herokuapp",
+						"com"
+					],
+					"path": [
+						"user",
+						"logout"
+					]
+				},
+				"description": ""
+			},
+			"response": []
 		}
 	]
 }

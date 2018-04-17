@@ -38,3 +38,9 @@ db.create_tables(
 from App.control.User import user
 App.register_blueprint(user)
 
+from App.control.Quiz import quiz 
+App.register_blueprint(quiz)
+
+
+
+

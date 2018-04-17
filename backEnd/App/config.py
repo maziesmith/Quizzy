@@ -8,8 +8,8 @@ DEBUG = True
 
 SECRET_KEY = "11dab799-0be9-asedf4#$*&*(@LASD4fe-9ded-651273eab8d3"
 
-DB_NAME = "test"
-DB_USERNAME = "root"
-DB_PASSWORD = "deathmetal"
-# DB_LOCATION = "ec2-54-163-255-181.compute-1.amazonaws.com"
-# DB_PORT = 5432
+DB_NAME = "Quizzy backend"
+DB_USERNAME = "ot555k1eebb79dnx"
+DB_PASSWORD = "u8nx7odcwvc9zrcf"
+DB_LOCATION = "tyduzbv3ggpf15sx.cbetxkdyhwsb.us-east-1.rds.amazonaws.com:/jqx6heejh889w1o7"
+DB_PORT = 3306
