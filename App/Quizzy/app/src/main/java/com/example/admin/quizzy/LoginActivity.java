@@ -1,5 +1,7 @@
 package com.example.admin.quizzy;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -36,6 +38,10 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        // TODO: skip login if already logged in
+
+
 
         // OnClick for login button logs us in
         _loginButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +86,13 @@ public class LoginActivity extends AppCompatActivity {
 
         // TODO: authenticate email and password
 
+        // write email and password to shared pref
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("email", email);
+        editor.putBoolean("logged_in", true);
+        editor.apply();
+
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -99,7 +112,8 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode == SIGNUP) {
             if (resultCode == RESULT_OK) {
                 // if our request and result are ok, signup worked
-                this.finish();
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
             }
         }
     }
@@ -114,7 +128,8 @@ public class LoginActivity extends AppCompatActivity {
     // login successful - reenable login button and finish
     public void loginSuccess() {
         _loginButton.setEnabled(true);
-        finish();
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     // login failed - reenable login button and show toast for fail
@@ -124,37 +139,39 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
     }
 
-    // TODO: check criteria
-    // check to see if input is valid
-    // criteria:
-    // username is email
-    // username not empty
-    // password not empty
-    // password over 6 chars ??
-    // password under 30 chars ??
-    public boolean checkForValidInput() {
-        boolean valid = true;
-
-        // get string for username
+    // make sure username is non-empty and is an email
+    public boolean checkUsername(){
         String email = _usernameView.getText().toString();
-        // get string for password
-        String password = _passwordView.getText().toString();
-
-        // check username
         if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
             _usernameView.setError("enter a valid email address");
-            valid = false;
+            return false;
         } else {
             _usernameView.setError(null);
+            return true;
         }
+    }
 
+    // make sure password is valid
+    // criteria:
+    // non-empty
+    // 6 >= password >= 30
+    public boolean checkPassword(){
+        String password = _passwordView.getText().toString();
         if (password.isEmpty() || password.length() < 6 || password.length() > 30) {
             _passwordView.setError("between 6 and 30 alphanumeric characters");
-            valid = false;
+            return false;
         } else {
             _passwordView.setError(null);
+            return true;
         }
+    }
 
-        return valid;
+    // check for valid input by checking both username and password
+    public boolean checkForValidInput() {
+        if (checkUsername() && checkPassword()){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

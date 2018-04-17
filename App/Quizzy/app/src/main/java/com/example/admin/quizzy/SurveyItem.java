@@ -10,10 +10,10 @@ import java.util.ArrayList;
 
 public class SurveyItem {
 
-    String _question;
-    int _numResponses;
-    ArrayList<String> _responses;
-    static final int MAX_RESPONSES = 6;
+    private String _question;
+    private int _numResponses;
+    private ArrayList<String> _responses;
+    static public final int MAX_RESPONSES = 6;
 
     public SurveyItem(int numResponses) {
         if(numResponses < 1) {
@@ -43,6 +43,8 @@ public class SurveyItem {
         _question = question;
         _numResponses = _responses.size();
     }
+
+    public int getNumResponses() { return  _numResponses; }
 
     public String getQuestion() {
         return _question;

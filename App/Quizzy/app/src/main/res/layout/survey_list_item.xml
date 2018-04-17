@@ -20,7 +20,7 @@
         android:id="@+id/responses_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/response_hint"
+        android:text="@string/open_response_hint"
         android:layout_marginLeft="20dp"
         android:textAppearance="?android:textAppearanceSmall"/>
 

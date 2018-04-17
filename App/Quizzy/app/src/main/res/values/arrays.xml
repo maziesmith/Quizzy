@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="itemTypes">
+        <item>Open Response</item>
+        <item>True / False</item>
+        <item>Multiple Choice</item>
+    </string-array>
+</resources>
