@@ -39,9 +39,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        // TODO: skip login if already logged in
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
 
-
+        // if we already set logged_in, we don't need to log in
+        if(prefs.getBoolean("logged_in", true)){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
 
         // OnClick for login button logs us in
         _loginButton.setOnClickListener(new View.OnClickListener() {
@@ -86,7 +91,7 @@ public class LoginActivity extends AppCompatActivity {
 
         // TODO: authenticate email and password
 
-        // write email and password to shared pref
+        // write email and logged in flag to shared pref
         SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("email", email);
