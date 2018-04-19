@@ -60,14 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         // set adapter for listview
         _listView.setAdapter(adapter);
-
-        /*_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // get the survey name
-                // set new intent for the survey
-            }
-        });*/
     }
 
     public MainActivity() {

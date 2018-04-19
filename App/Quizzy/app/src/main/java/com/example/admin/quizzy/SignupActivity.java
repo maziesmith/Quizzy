@@ -90,7 +90,7 @@ public class SignupActivity extends AppCompatActivity {
         // get name, email, pwd from edittexts
         name = _nameView.getText().toString();
         email = _emailView.getText().toString();
-        String password = _passwordView.getText().toString();
+        final String password = _passwordView.getText().toString();
 
         // handler for 3 sec delay
         new android.os.Handler().postDelayed(

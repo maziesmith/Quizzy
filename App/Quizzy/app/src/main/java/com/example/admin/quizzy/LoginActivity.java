@@ -22,6 +22,7 @@ import java.io.IOException;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -105,9 +106,9 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
         // get email string
-        String email = _usernameView.getText().toString();
+        final String email = _usernameView.getText().toString();
         // get password string
-        String password = _passwordView.getText().toString();
+        final String password = _passwordView.getText().toString();
 
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
@@ -192,7 +193,7 @@ public class LoginActivity extends AppCompatActivity {
         return (checkUsername() && checkPassword());
     }
 
-    public int authenticateRequest(String username, String password) {
+    public int authenticateRequest(final String username, final String password) {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\":\"" +
                 username +
@@ -230,14 +231,14 @@ public class LoginActivity extends AppCompatActivity {
                             String res = response.body().string();
                             // use moshi to turn it into an object for easy access
                             JsonAdapter<loginResponse> jsonAdapter = moshi.adapter(loginResponse.class);
-                            // throws JsonDataException if it doesn't fit in signupResponse class
+                            // throws JsonDataException if it doesn't fit in response class
                             loginResponse = jsonAdapter.fromJson(res);
-                            if (loginResponse.username == username && loginResponse.password == password){
+                            if (loginResponse.username.equals(username) && loginResponse.password.equals(password)){
                                 loginSuccess();
                             } else {
                                 loginFailed();
                             }
-                            // if we get here signup is successful
+                            // if we get here login is successful
                         } catch (JsonDataException e) {
                             // data doesn't match the proper response format
                             loginFailed();
