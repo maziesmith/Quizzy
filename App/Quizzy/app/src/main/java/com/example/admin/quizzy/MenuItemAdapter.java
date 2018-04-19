@@ -32,9 +32,13 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         // Get the object located at this position in the list
         MenuItem currentItem = getItem(position);
 
-        // Handle name
+        // set name
         TextView mmTextView = (TextView) v.findViewById(R.id.menuItemTitle);
         mmTextView.setText(currentItem.getSurveyName());
+
+        // set edit button
+
+        //set delete button
 
         return v;
     }
