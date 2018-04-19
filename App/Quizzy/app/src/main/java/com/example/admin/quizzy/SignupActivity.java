@@ -96,8 +96,7 @@ public class SignupActivity extends AppCompatActivity {
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        // TODO: route for signin
-
+                        signup_request(email, password);
                         progressDialog.dismiss();
                     }
                 }, 3000);
@@ -171,7 +170,7 @@ public class SignupActivity extends AppCompatActivity {
 
     // makes a request using okhttp3
     // if the call is successful, return true, else false
-    public boolean signup_request(String username, String password) {
+    public void signup_request(String username, String password) {
         // this is how the string will be parsed later
         MediaType mediaType = MediaType.parse("application/json");
 
@@ -224,8 +223,6 @@ public class SignupActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-        return false;
     }
 
     static class signupResponse {

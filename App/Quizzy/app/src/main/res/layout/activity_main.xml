@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:baselineAligned="false">
 
         <TextView
             android:id="@+id/allSurveys"
@@ -22,8 +23,16 @@
             android:id="@+id/menuList"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:drawSelectorOnTop="true"/>
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_gravity="bottom"
+            android:enabled="false"
+            android:text="Log Out" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
