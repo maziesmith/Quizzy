@@ -1,12 +1,14 @@
 package com.example.admin.quizzy;
 
 import android.content.Context;
+import android.media.Image;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -63,6 +65,7 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
                 case 1:
                     convertView = LayoutInflater.from(getContext()).inflate(
                             R.layout.survey_list_item, parent, false);
+                    holder.deleteBtn = (ImageButton)convertView.findViewById(R.id.delete_btn);
                     holder.questionEdit = (EditText)convertView.findViewById(R.id.question);
                     holder.questionEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
@@ -78,6 +81,7 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
                 case 2:
                     convertView = LayoutInflater.from(getContext()).inflate(
                             R.layout.survey_list_item_boolean, parent, false);
+                    holder.deleteBtn = (ImageButton)convertView.findViewById(R.id.delete_btn);
                     holder.questionEdit = (EditText)convertView.findViewById(R.id.question);
                     holder.questionEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
@@ -120,6 +124,7 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
                         parentLayout.addView(newResponse);
                     }
 
+                    holder.deleteBtn = (ImageButton)convertView.findViewById(R.id.delete_btn);
                     holder.questionEdit = (EditText)convertView.findViewById(R.id.question);
                     holder.questionEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                         public void onFocusChange(View v, boolean hasFocus) {
@@ -160,7 +165,15 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
         /* *
          * Update item view from model
          * */
-        SurveyItem currentItem = getItem(position);
+        final SurveyItem currentItem = getItem(position);
+
+        holder.deleteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                remove(currentItem);
+            }
+        });
+
         holder.questionEdit.setText(currentItem.getQuestion());
         holder.questionEdit.setId(position);  // So position can be retrieved in OnFocusChange callback
 
@@ -195,6 +208,7 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
         EditText questionEdit;
         TextView responsesView;
         ArrayList<EditText> responseList;
+        ImageButton deleteBtn;
 
         public SurveyEditViewHolder() {
             responseList = new ArrayList<EditText>(SurveyItem.MAX_RESPONSES);

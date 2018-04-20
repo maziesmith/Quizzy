@@ -1,42 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:layout_height="wrap_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="5dp">
-
-    <EditText
-        android:id="@+id/question"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="text"
-        android:hint="@string/question_hint"
-        android:textStyle="italic"
-        android:textAppearance="?android:textAppearanceSmall" />
-
+    android:orientation="horizontal"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="10dp">
 
     <LinearLayout
-        android:id="@+id/responses_section"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/text_area"
         android:orientation="vertical"
-        android:layout_marginLeft="20dp">
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_margin="5dp"
+        android:layout_gravity="center_vertical">
 
         <EditText
-            android:id="@+id/response1"
+            android:id="@+id/question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:inputType="text"
-            android:hint="@string/response_hint"
-            android:textAppearance="?android:textAppearanceSmall"/>
-        <EditText
-            android:id="@+id/response2"
+            android:hint="@string/question_hint"
+            android:textStyle="italic"
+            android:textAppearance="?android:textAppearanceSmall" />
+
+
+        <LinearLayout
+            android:id="@+id/responses_section"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:hint="@string/response_hint"
-            android:textAppearance="?android:textAppearanceSmall"/>
+            android:orientation="vertical"
+            android:layout_marginLeft="20dp">
+
+            <EditText
+                android:id="@+id/response1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="@string/response_hint"
+                android:textAppearance="?android:textAppearanceSmall"/>
+            <EditText
+                android:id="@+id/response2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:hint="@string/response_hint"
+                android:textAppearance="?android:textAppearanceSmall"/>
+        </LinearLayout>
+
     </LinearLayout>
 
+    <ImageButton
+        android:id="@+id/delete_btn"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_toRightOf="@id/text_area"
+        android:layout_gravity="center_vertical"
+        android:scaleType="fitCenter"
+        android:src="@drawable/delete_button"/>
 </LinearLayout>

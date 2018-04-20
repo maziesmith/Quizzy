@@ -115,6 +115,11 @@ public class CreateSurveyActivity extends AppCompatActivity
     }
 
 
+    /**
+     * A fragment that is used to save the data in the adapter when
+     * the screen orientation changes, so it can be restored on re-creation
+     * of the activity.
+     */
     public static class RetainedFragment extends Fragment {
         private ArrayList<SurveyItem> data;
 
