@@ -5,7 +5,10 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -19,34 +22,50 @@ import java.util.ArrayList;
  * Created by Admin on 3/19/2018.
  */
 
-public class CreateSurveyActivity extends AppCompatActivity implements AddSurveyItemDialog.AddSurveyItemDialogListener{
+public class CreateSurveyActivity extends AppCompatActivity
+        implements AddSurveyItemDialog.AddSurveyItemDialogListener, AddMultipleChoiceDialog.AddMultipleChoiceDialogListener {
 
-    SurveyItemAdapter _adapter;
+    private SurveyItemAdapter _adapter;
+    private RetainedFragment _dataFragment;
+    private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_survey);
 
-        _adapter = new SurveyItemAdapter(this, new ArrayList<SurveyItem>());
+        FragmentManager fm = getSupportFragmentManager();
+        _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_RETAINED_FRAGMENT);
+        if(_dataFragment == null) {
+            _dataFragment = new RetainedFragment();
+            fm.beginTransaction().add(_dataFragment, TAG_RETAINED_FRAGMENT).commit();
+            _dataFragment.setData(new ArrayList<SurveyItem>());
+        }
+
+        _adapter = new SurveyItemAdapter(this, _dataFragment.getData());
         ListView surveyList = findViewById(R.id.surveyEditList);
         surveyList.setAdapter(_adapter);
-        //surveyList.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        surveyList.setTranscriptMode(ListView.TRANSCRIPT_MODE_NORMAL);
 
         FloatingActionButton addButton = findViewById(R.id.surveyAddItemButton);
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-/*                ArrayList<SurveyItem> a = new ArrayList<SurveyItem>();
-                a.add(new SurveyItem("How was your day?", new String[]{"Hello"}));
-                a.add(new SurveyItem("What time is it?", new String[]{"Hello", "Goodbye"}));
-                a.add(new SurveyItem("What are you up to?", new String[]{"Hello"}));
-
-                _adapter.addAll(a);*/
                 AddSurveyItemDialog dialog = new AddSurveyItemDialog();
                 dialog.show(getSupportFragmentManager(), "AddItem");
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        _dataFragment.setData(_adapter.getData());
+
+        if(isFinishing()) {
+            FragmentManager fm = getSupportFragmentManager();
+            fm.beginTransaction().remove(_dataFragment).commit();
+        }
     }
 
     /* Allows the EditTexts to lose focus when touching outside them.
@@ -81,5 +100,36 @@ public class CreateSurveyActivity extends AppCompatActivity implements AddSurvey
         newItem.setResponse(0, "True");
         newItem.setResponse(1, "False");
         _adapter.add(newItem);
+    }
+
+    @Override
+    public void onMultipleChoiceClick(DialogFragment dialog) {
+        AddMultipleChoiceDialog newDialog = new AddMultipleChoiceDialog();
+        newDialog.show(getSupportFragmentManager(), "ChooseResponseCount");
+    }
+
+    @Override
+    public void onConfirm(DialogFragment dialog, int chosenValue) {
+        SurveyItem newItem = new SurveyItem(chosenValue);
+        _adapter.add(newItem);
+    }
+
+
+    public static class RetainedFragment extends Fragment {
+        private ArrayList<SurveyItem> data;
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setRetainInstance(true);
+        }
+
+        public void setData(ArrayList<SurveyItem> data) {
+            this.data = data;
+        }
+
+        public ArrayList<SurveyItem> getData() {
+            return data;
+        }
     }
 }

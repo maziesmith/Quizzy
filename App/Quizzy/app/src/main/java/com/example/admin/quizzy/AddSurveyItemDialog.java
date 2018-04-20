@@ -13,6 +13,7 @@ public class AddSurveyItemDialog extends DialogFragment {
     public interface AddSurveyItemDialogListener {
         public void onOpenResponseClick(DialogFragment dialog);
         public void onTrueFalseClick(DialogFragment dialog);
+        public void onMultipleChoiceClick(DialogFragment dialog);
     }
 
     AddSurveyItemDialogListener _listener;
@@ -50,6 +51,7 @@ public class AddSurveyItemDialog extends DialogFragment {
                                 _listener.onTrueFalseClick(AddSurveyItemDialog.this);
                                 break;
                             default:
+                                _listener.onMultipleChoiceClick(AddSurveyItemDialog.this);
                                 break;
                         }
                     }

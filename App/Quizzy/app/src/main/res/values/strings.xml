@@ -4,6 +4,9 @@
     <string name="response_hint">Response</string>
     <string name="open_response_hint">Open Response</string>
     <string name="add_item_dialog_title">Choose Question Type</string>
+    <string name="pick_num_responses">Number of Choices</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
     <string name="all_surveys">All Surveys</string>
     <string name="Login">Log In</string>
     <string name="password">Password</string>
