@@ -110,6 +110,8 @@ public class LoginActivity extends AppCompatActivity {
         // get password string
         final String password = _passwordView.getText().toString();
 
+        authenticateRequest(email, password);
+
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
@@ -195,7 +197,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public int authenticateRequest(final String username, final String password) {
         MediaType mediaType = MediaType.parse("application/json");
-       /*
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\":\"" +
                 username +
                 "\",\n\t\"password\":\"" +
@@ -235,39 +236,44 @@ public class LoginActivity extends AppCompatActivity {
                             // throws JsonDataException if it doesn't fit in response class
                             loginResponse = jsonAdapter.fromJson(res);
                             if (loginResponse.logged_in){
-                                loginSuccess();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // main thread stuff here
+                                        loginSuccess();
+                                    }
+                                });
                             } else {
-                                loginFailed();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        // main thread stuff here
+                                        loginFailed();
+                                    }
+                                });
                             }
                             // if we get here login is successful
                         } catch (JsonDataException e) {
                             // data doesn't match the proper response format
-                            loginFailed();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // main thread stuff here
+                                    loginFailed();
+                                }
+                            });
+                        } catch (IOException e) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // main thread stuff here
+                                    loginFailed();
+                                }
+                            });
                         }
                     }
                 });
-                */
 
-        // testing json parsing
-        try {
-            // turn our result into a string
-            String res = "{\"id\": 42, \"username\": \"brian\", \"logged_in\": true}";
-            // use moshi to turn it into an object for easy access
-            JsonAdapter<loginResponse> jsonAdapter = moshi.adapter(loginResponse.class);
-            // throws JsonDataException if it doesn't fit in response class
-            loginResponse = jsonAdapter.fromJson(res);
-            if (loginResponse.logged_in){
-                loginSuccess();
-            } else {
-                loginFailed();
-            }
-            // if we get here login is successful
-        } catch (JsonDataException e) {
-            // data doesn't match the proper response format
-            loginFailed();
-        } catch (IOException e) {
-            loginFailed();
-        }
         return loginResponse.userid;
     }
 

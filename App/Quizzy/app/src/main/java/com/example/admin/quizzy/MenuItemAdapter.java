@@ -22,9 +22,11 @@ import butterknife.OnClick;
 public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
 
     private MenuItem currentItem;
+    private Context context;
 
     public MenuItemAdapter(Context context, ArrayList<MenuItem> items) {
         super(context, 0, items);
+        this.context = context;
     }
 
     @Override
@@ -39,7 +41,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         }
 
         // bind everything
-        holder = new ViewHolder(v, parent.getContext());
+        holder = new ViewHolder(v);
 
         // Get the object located at this position in the list
         currentItem = getItem(position);
@@ -47,29 +49,35 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         // set name
         holder.titleView.setText(currentItem.getSurveyName());
 
+        // set onclick for edit button
+        holder.editButton.setOnClickListener(new View.OnClickListener(){
+           public void onClick(View v){
+               Intent intent = new Intent(context, CreateSurveyActivity.class);
+               intent.putExtra("surveyid", currentItem.getSurveyId());
+               intent.putExtra("surveyname", currentItem.getSurveyName());
+               context.startActivity(intent);
+           }
+        });
+
+        // set onclick for delete button
+
         return v;
+    }
+
+
+    @OnClick(R.id.menuEditButton)
+    public void edit(){
     }
 
     // holds all the views to bind with butterknife
     static class ViewHolder{
-        private Context context;
-
         @BindView(R.id.menuItemTitle) TextView titleView;
         @BindView(R.id.menuEditButton) ImageButton editButton;
         @BindView(R.id.menuDeleteButton) ImageButton deleteButton;
 
-        @OnClick(R.id.menuEditButton)
-        public void edit(MenuItem currentItem){
-            Intent intent = new Intent(context, CreateSurveyActivity.class);
-            intent.putExtra("surveyid", currentItem.getSurveyId());
-            intent.putExtra("surveyname", currentItem.getSurveyName());
-            context.startActivity(intent);
-        }
-
         // constructor binds them immediately
-        public ViewHolder(View view, Context context){
+        public ViewHolder(View view){
             ButterKnife.bind(this, view);
-            this.context = context;
         }
     }
 
