@@ -17,4 +17,22 @@
         android:paddingEnd="10dp"
         android:layout_weight="2"/>
 
+    <ImageButton
+        android:contentDescription="@string/edit"
+        android:id="@+id/menuEditButton"
+        android:layout_width="20dp"
+        android:layout_height="22dp"
+        android:paddingTop="7dp"
+        android:src="@drawable/edit_button"
+        android:layout_weight=".25"/>
+
+    <ImageButton
+        android:contentDescription="@string/delete"
+        android:id="@+id/menuDeleteButton"
+        android:layout_width="20dp"
+        android:layout_height="22dp"
+        android:paddingTop="7dp"
+        android:layout_weight=".25"
+        android:src="@drawable/delete_button" />
+
 </LinearLayout>

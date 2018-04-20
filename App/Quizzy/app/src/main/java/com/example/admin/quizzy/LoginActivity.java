@@ -14,8 +14,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
+import com.squareup.moshi.Moshi;
+
+import java.io.IOException;
+
 import butterknife.ButterKnife;
 import butterknife.BindView;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by probu on 4/8/2018.
@@ -26,6 +40,13 @@ import butterknife.BindView;
 public class LoginActivity extends AppCompatActivity {
     // flag to see if we need to signup
     private static final int SIGNUP = 0;
+
+    // for okhttp3 requests
+    private final OkHttpClient client = new OkHttpClient();
+    private final Moshi moshi = new Moshi.Builder().build();
+
+    // handle for login response
+    loginResponse loginResponse;
 
     // bind views
     @BindView(R.id.input_email) EditText _usernameView;
@@ -39,9 +60,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        // TODO: skip login if already logged in
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
 
-
+        // if we already set logged_in, we don't need to log in
+        if(prefs.getBoolean("logged_in", true)){
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
 
         // OnClick for login button logs us in
         _loginButton.setOnClickListener(new View.OnClickListener() {
@@ -80,26 +106,20 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.show();
 
         // get email string
-        String email = _usernameView.getText().toString();
+        final String email = _usernameView.getText().toString();
         // get password string
-        String password = _passwordView.getText().toString();
-
-        // TODO: authenticate email and password
-
-        // write email and password to shared pref
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("email", email);
-        editor.putBoolean("logged_in", true);
-        editor.apply();
+        final String password = _passwordView.getText().toString();
 
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                // On complete call either loginSuccess or loginFailed
-                loginSuccess();
-                // loginFailed();
+                // write email and logged in flag to shared pref
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("email", email);
+                editor.putBoolean("logged_in", true);
+                editor.apply();
                 progressDialog.dismiss();
             }
         }, 3000);
@@ -125,14 +145,19 @@ public class LoginActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 
-    // login successful - reenable login button and finish
     public void loginSuccess() {
+        // write email and logged in flag to shared pref
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("email", loginResponse.username);
+        editor.putInt("userid", loginResponse.userid);
+        editor.putBoolean("logged_in", true);
+        editor.apply();
         _loginButton.setEnabled(true);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
 
-    // login failed - reenable login button and show toast for fail
     public void loginFailed() {
         Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
@@ -152,9 +177,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // make sure password is valid
-    // criteria:
-    // non-empty
-    // 6 >= password >= 30
     public boolean checkPassword(){
         String password = _passwordView.getText().toString();
         if (password.isEmpty() || password.length() < 6 || password.length() > 30) {
@@ -168,10 +190,71 @@ public class LoginActivity extends AppCompatActivity {
 
     // check for valid input by checking both username and password
     public boolean checkForValidInput() {
-        if (checkUsername() && checkPassword()){
-            return true;
-        } else {
-            return false;
-        }
+        return (checkUsername() && checkPassword());
     }
+
+    public int authenticateRequest(final String username, final String password) {
+        MediaType mediaType = MediaType.parse("application/json");
+       /*
+        RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\":\"" +
+                username +
+                "\",\n\t\"password\":\"" +
+                password +
+                "\"\n}");
+        Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/user/login")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Postman-Token", "af192735-9852-47ed-afdf-029de5065962")
+                .build();
+
+        // makes an asynchronous call for network io
+        client.newCall(request)
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(final Call call, IOException e) {
+                        // Error
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // main thread stuff here
+                                loginFailed();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        // we got a response but we need to check if it's the one we want
+                        try {
+                            // turn our result into a string
+                            String res = response.body().string();
+                            // use moshi to turn it into an object for easy access
+                            JsonAdapter<loginResponse> jsonAdapter = moshi.adapter(loginResponse.class);
+                            // throws JsonDataException if it doesn't fit in response class
+                            loginResponse = jsonAdapter.fromJson(res);
+                            if (loginResponse.logged_in){
+                                loginSuccess();
+                            } else {
+                                loginFailed();
+                            }
+                            // if we get here login is successful
+                        } catch (JsonDataException e) {
+                            // data doesn't match the proper response format
+                            loginFailed();
+                        }
+                    }
+                });
+                */
+        return loginResponse.userid;
+    }
+
+
+    static class loginResponse {
+        String username;
+        int userid;
+        Boolean logged_in;
+    }
+
 }

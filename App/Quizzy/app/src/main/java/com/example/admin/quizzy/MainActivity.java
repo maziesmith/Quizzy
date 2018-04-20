@@ -11,15 +11,30 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
+import com.squareup.moshi.Moshi;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.BindView;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by probu on 3/20/2018.
  */
 
 public class MainActivity extends AppCompatActivity {
+    // for okhttp3 requests
+    private final OkHttpClient client = new OkHttpClient();
+    private final Moshi moshi = new Moshi.Builder().build();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,14 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
         // set adapter for listview
         _listView.setAdapter(adapter);
-
-        /*_listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                // get the survey name
-                // set new intent for the survey
-            }
-        });*/
     }
 
     public MainActivity() {
@@ -61,10 +68,31 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: populate the listview
     public void populate(ArrayList<MenuItem> menuItems){
+        /*Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/quiz/all")
+                .get()
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Postman-Token", "4226f3f9-8f85-46ee-a56a-158129333908")
+                .build();
+        // makes an asynchronous call for network io
+        client.newCall(request)
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(final Call call, IOException e) {
+                        // Error
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // main thread stuff here
+                            }
+                        });
+                    }
 
+                    @Override
+                    public void onResponse(Call call, final Response response) throws IOException {
+                        String res = response.body().string();
+                        // parse string
+                    }
+                });*/
     }
-
-
-
 }
-
