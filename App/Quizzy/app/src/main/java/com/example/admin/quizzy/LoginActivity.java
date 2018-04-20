@@ -110,12 +110,14 @@ public class LoginActivity extends AppCompatActivity {
         // get password string
         final String password = _passwordView.getText().toString();
 
-        final int userid = authenticateRequest(email, password);
+
 
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                progressDialog.dismiss();
+                final int userid = authenticateRequest(email, password);
                 // write email and logged in flag to shared pref
                 SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
                 SharedPreferences.Editor editor = pref.edit();
@@ -123,7 +125,6 @@ public class LoginActivity extends AppCompatActivity {
                 editor.putInt("userid", userid);
                 editor.putBoolean("logged_in", true);
                 editor.apply();
-                progressDialog.dismiss();
             }
         }, 3000);
     }
