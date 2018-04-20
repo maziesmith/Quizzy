@@ -150,7 +150,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("email", loginResponse.username);
-        editor.putString("userid", loginResponse.userid);
+        editor.putInt("userid", loginResponse.userid);
         editor.putBoolean("logged_in", true);
         editor.apply();
         _loginButton.setEnabled(true);
@@ -195,6 +195,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public int authenticateRequest(final String username, final String password) {
         MediaType mediaType = MediaType.parse("application/json");
+       /*
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\":\"" +
                 username +
                 "\",\n\t\"password\":\"" +
@@ -233,7 +234,7 @@ public class LoginActivity extends AppCompatActivity {
                             JsonAdapter<loginResponse> jsonAdapter = moshi.adapter(loginResponse.class);
                             // throws JsonDataException if it doesn't fit in response class
                             loginResponse = jsonAdapter.fromJson(res);
-                            if (loginResponse.username.equals(username) && loginResponse.password.equals(password)){
+                            if (loginResponse.logged_in){
                                 loginSuccess();
                             } else {
                                 loginFailed();
@@ -245,15 +246,15 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
-        return 0;
+                */
+        return loginResponse.userid;
     }
 
 
     static class loginResponse {
         String username;
-        String password;
-        String userid;
-        String logged_in;
+        int userid;
+        Boolean logged_in;
     }
 
 }

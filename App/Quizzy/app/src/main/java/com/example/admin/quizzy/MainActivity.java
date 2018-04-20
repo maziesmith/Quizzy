@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
     // TODO: populate the listview
     public void populate(ArrayList<MenuItem> menuItems){
-        Request request = new Request.Builder()
+        /*Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/quiz/all")
                 .get()
                 .addHeader("Cache-Control", "no-cache")
@@ -93,6 +93,6 @@ public class MainActivity extends AppCompatActivity {
                         String res = response.body().string();
                         // parse string
                     }
-                });
+                });*/
     }
 }

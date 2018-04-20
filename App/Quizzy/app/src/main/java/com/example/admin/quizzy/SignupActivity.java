@@ -173,7 +173,7 @@ public class SignupActivity extends AppCompatActivity {
     public void signup_request(String username, String password) {
         // this is how the string will be parsed later
         MediaType mediaType = MediaType.parse("application/json");
-
+        /*
         // makes json body of request with parameters
         RequestBody body = RequestBody.create(mediaType, "{\"username\" : \"" +
                 username +
@@ -223,6 +223,7 @@ public class SignupActivity extends AppCompatActivity {
                         }
                     }
                 });
+        */
     }
 
     static class signupResponse {
