@@ -247,13 +247,34 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 });
                 */
+
+        // testing json parsing
+        try {
+            // turn our result into a string
+            String res = "{\"id\": 42, \"username\": \"brian\", \"logged_in\": true}";
+            // use moshi to turn it into an object for easy access
+            JsonAdapter<loginResponse> jsonAdapter = moshi.adapter(loginResponse.class);
+            // throws JsonDataException if it doesn't fit in response class
+            loginResponse = jsonAdapter.fromJson(res);
+            if (loginResponse.logged_in){
+                loginSuccess();
+            } else {
+                loginFailed();
+            }
+            // if we get here login is successful
+        } catch (JsonDataException e) {
+            // data doesn't match the proper response format
+            loginFailed();
+        } catch (IOException e) {
+            loginFailed();
+        }
         return loginResponse.userid;
     }
 
 
     static class loginResponse {
-        String username;
         int userid;
+        String username;
         Boolean logged_in;
     }
 
