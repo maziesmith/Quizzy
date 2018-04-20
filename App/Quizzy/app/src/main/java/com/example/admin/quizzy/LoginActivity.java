@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
         // get password string
         final String password = _passwordView.getText().toString();
 
-        authenticateRequest(email, password);
+        final int userid = authenticateRequest(email, password);
 
         // create handler to delay login by 3 seconds, because that's what logins do I guess
         new android.os.Handler().postDelayed(new Runnable() {
@@ -120,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                 SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
                 SharedPreferences.Editor editor = pref.edit();
                 editor.putString("email", email);
+                editor.putInt("userid", userid);
                 editor.putBoolean("logged_in", true);
                 editor.apply();
                 progressDialog.dismiss();
@@ -148,22 +149,34 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void loginSuccess() {
-        // write email and logged in flag to shared pref
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("email", loginResponse.username);
-        editor.putInt("userid", loginResponse.userid);
-        editor.putBoolean("logged_in", true);
-        editor.apply();
-        _loginButton.setEnabled(true);
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // main thread stuff here
+                // write email and logged in flag to shared pref
+                SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+                SharedPreferences.Editor editor = pref.edit();
+                editor.putString("email", loginResponse.username);
+                editor.putInt("userid", loginResponse.userid);
+                editor.putBoolean("logged_in", true);
+                editor.apply();
+                _loginButton.setEnabled(true);
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void loginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // main thread stuff here
+                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
 
-        _loginButton.setEnabled(true);
+                _loginButton.setEnabled(true);
+            }
+        });
     }
 
     // make sure username is non-empty and is an email
@@ -216,13 +229,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(final Call call, IOException e) {
                         // Error
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // main thread stuff here
-                                loginFailed();
-                            }
-                        });
+                        loginFailed();
                     }
 
                     @Override
@@ -236,40 +243,16 @@ public class LoginActivity extends AppCompatActivity {
                             // throws JsonDataException if it doesn't fit in response class
                             loginResponse = jsonAdapter.fromJson(res);
                             if (loginResponse.logged_in){
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // main thread stuff here
-                                        loginSuccess();
-                                    }
-                                });
+                                loginSuccess();
                             } else {
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // main thread stuff here
-                                        loginFailed();
-                                    }
-                                });
+                                loginFailed();
                             }
                             // if we get here login is successful
                         } catch (JsonDataException e) {
                             // data doesn't match the proper response format
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // main thread stuff here
-                                    loginFailed();
-                                }
-                            });
+                            loginFailed();
                         } catch (IOException e) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // main thread stuff here
-                                    loginFailed();
-                                }
-                            });
+                            loginFailed();
                         }
                     }
                 });
