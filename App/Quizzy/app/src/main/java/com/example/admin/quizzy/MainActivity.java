@@ -2,23 +2,18 @@ package com.example.admin.quizzy;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.content.Intent;
-import android.net.Uri;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.ListView;
 
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
+import com.squareup.moshi.Types;
 
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import butterknife.ButterKnife;
-import butterknife.BindView;
+import java.util.List;
+
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
@@ -41,16 +36,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Create a list of surveys
-        final ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
+        final ArrayList<MenuItem> menuItems = new ArrayList<>();
 
         // fill the menuItems list with stuff
-        //populate(menuItems);
-        menuItems.add(new MenuItem("New Survey", 100));
-        menuItems.add(new MenuItem("Survey", 101));
-        menuItems.add(new MenuItem("vey", 102));
-        menuItems.add(new MenuItem("ey", 103));
-        menuItems.add(new MenuItem("vey", 104));
-        menuItems.add(new MenuItem("Survey", 105));
+        populate(menuItems);
 
         // Create the adapter
         MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
@@ -66,9 +55,8 @@ public class MainActivity extends AppCompatActivity {
         // Required empty public constructor
     }
 
-    // TODO: populate the listview
-    public void populate(ArrayList<MenuItem> menuItems){
-        /*Request request = new Request.Builder()
+    public void populate(final ArrayList<MenuItem> m){
+        Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/quiz/all")
                 .get()
                 .addHeader("Cache-Control", "no-cache")
@@ -90,9 +78,15 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
-                        String res = response.body().string();
-                        // parse string
+                        try {
+                            String res = response.body().string();
+                            Type listMenuItem = Types.newParameterizedType(List.class, MenuItem.class);
+                            JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
+                            m.addAll(adapter.fromJson(res));
+                        } catch(IOException ignored){
+                        } catch(JsonDataException ignored) {
+                        }
                     }
-                });*/
+                });
     }
 }

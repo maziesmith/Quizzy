@@ -32,7 +32,7 @@
             android:layout_height="35dp"
             android:layout_gravity="bottom"
             android:enabled="false"
-            android:text="Log Out" />
+            android:text="@string/log_out" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
