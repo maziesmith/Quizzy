@@ -117,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Fix request body
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\" : \"brian\",\n\t\"password\" :\"brian\"\n}");
 
-        
+
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/user/logout")
                 .post(body)
