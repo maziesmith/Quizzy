@@ -18,4 +18,5 @@
     <string name="already_a_member_log_in">Already a member? Log in</string>
     <string name="edit">edit</string>
     <string name="delete">delete</string>
+    <string name="log_out">Log Out</string>
 </resources>

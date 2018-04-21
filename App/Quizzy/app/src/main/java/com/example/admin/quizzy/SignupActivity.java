@@ -92,12 +92,14 @@ public class SignupActivity extends AppCompatActivity {
         email = _emailView.getText().toString();
         final String password = _passwordView.getText().toString();
 
+
+
         // handler for 3 sec delay
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
-                        signup_request(email, password);
                         progressDialog.dismiss();
+                        signup_request(email, password);
                     }
                 }, 3000);
     }
@@ -173,7 +175,7 @@ public class SignupActivity extends AppCompatActivity {
     public void signup_request(String username, String password) {
         // this is how the string will be parsed later
         MediaType mediaType = MediaType.parse("application/json");
-        /*
+
         // makes json body of request with parameters
         RequestBody body = RequestBody.create(mediaType, "{\"username\" : \"" +
                 username +
@@ -216,21 +218,23 @@ public class SignupActivity extends AppCompatActivity {
                             // throws JsonDataException if it doesn't fit in signupResponse class
                             signupResponse s = jsonAdapter.fromJson(res);
                             // if we get here signup is successful
-                            signupSuccess();
+                            if(s.logged_in) {
+                                signupSuccess();
+                            }
                         } catch(JsonDataException e){
                             // data doesn't match the proper response format
+                            signupFailed();
+                        } catch(IOException e) {
                             signupFailed();
                         }
                     }
                 });
-        */
     }
 
     static class signupResponse {
         public Boolean logged_in;
         public String username;
-        public String id;
-
+        public int id;
     }
 }
 

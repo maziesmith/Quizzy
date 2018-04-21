@@ -1,36 +1,30 @@
 package com.example.admin.quizzy;
 
 
-import android.content.Context;
-import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
-
 /**
  * Created by brianmedina on 3/27/18.
  */
 
 public class MenuItem {
-    private String surveyname;
-    private int surveyid;
+    private int id;
+    private String quizname;
+    private int userid;
 
-    public MenuItem(String surveyname, int surveyid) {
-        this.surveyname = surveyname;
-        this.surveyid = surveyid;
+    public MenuItem(String quizname, int surveyid) {
+        this.quizname = quizname;
+        this.id = surveyid;
     }
 
     public String getSurveyName(){
-        return surveyname;
+        return quizname;
     }
 
     public int getSurveyId() {
-        return surveyid;
+        return id;
+    }
+
+    public int getUserId(){
+        return userid;
     }
 
 
