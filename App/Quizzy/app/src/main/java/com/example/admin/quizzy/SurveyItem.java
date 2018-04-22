@@ -66,4 +66,21 @@ public class SurveyItem {
             return true;
         }
     }
+
+    public String toJson() {
+        String jsonString = "{";
+
+        jsonString += "\"question\": " + "\"" + _question + "\",";
+        jsonString += "\"responses\": [";
+        for (int i = 0; i < _responses.size(); i++) {
+            jsonString += "\"" + _responses.get(i) + "\"";
+            if(i < (_responses.size() - 1)) {
+                jsonString += ",";
+            }
+        }
+        jsonString += "]";
+
+        jsonString += "}";
+        return jsonString;
+    }
 }

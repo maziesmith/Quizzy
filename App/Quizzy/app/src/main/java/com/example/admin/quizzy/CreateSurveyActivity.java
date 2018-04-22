@@ -15,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -53,6 +55,15 @@ public class CreateSurveyActivity extends AppCompatActivity
             public void onClick(View view) {
                 AddSurveyItemDialog dialog = new AddSurveyItemDialog();
                 dialog.show(getSupportFragmentManager(), "AddItem");
+            }
+        });
+
+        FloatingActionButton saveButton = findViewById(R.id.surveySaveButton);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(CreateSurveyActivity.this, "Save Successful:\n\n" + dataToJson(), Toast.LENGTH_LONG).show();
+                Log.i("SAVING", "onClick: " + dataToJson());
             }
         });
     }
@@ -112,6 +123,26 @@ public class CreateSurveyActivity extends AppCompatActivity
     public void onConfirm(DialogFragment dialog, int chosenValue) {
         SurveyItem newItem = new SurveyItem(chosenValue);
         _adapter.add(newItem);
+    }
+
+    private String dataToJson() {
+        String jsonString = "{";
+
+        TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
+        jsonString += "\"title\": " + "\"" + titleView.getText().toString() + "\",";
+        jsonString += "\"items\": [";
+
+        ArrayList<SurveyItem> items = _adapter.getData();
+        for(int i = 0; i < items.size(); i++) {
+            jsonString += items.get(i).toJson();
+            if(i < (items.size() - 1)) {
+                jsonString += ",";
+            }
+        }
+        jsonString += "]";
+
+        jsonString += "}";
+        return jsonString;
     }
 
 
