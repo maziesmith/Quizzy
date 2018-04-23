@@ -114,8 +114,13 @@ public class MainActivity extends AppCompatActivity {
 
         MediaType mediaType = MediaType.parse("application/json");
 
-        // TODO: Fix request body
-        RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\" : \"brian\",\n\t\"password\" :\"brian\"\n}");
+        // get email to log out
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        final String email = pref.getString("username", null);
+
+        RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\" : \"" +
+                email +
+                "\"}");
 
 
         Request request = new Request.Builder()

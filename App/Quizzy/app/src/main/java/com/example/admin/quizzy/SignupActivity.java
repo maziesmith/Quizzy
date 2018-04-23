@@ -33,6 +33,7 @@ import okhttp3.Response;
 public class SignupActivity extends AppCompatActivity {
     // handle for name and email
     private String name, email;
+    private int userid;
 
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
