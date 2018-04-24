@@ -11,8 +11,8 @@ class QuestionAnswer(Model):
     text = CharField(null = False)
     # this field should not be able to be set it should be set when making the quiz 
     isRight = BooleanField(default = False, null = False)
-    username = ForeignKeyField(User, null = False)
-    quizid = ForeignKeyField(QuestionText, null = False)
+    user = ForeignKeyField(User, db_column='user', related_name='questionanswer', null = False)
+    questiontextid = ForeignKeyField(QuestionText,db_column='questiontextid',related_name='questiontext', null = False)
     # time and date feild would be nice for uniqueness. 
 
     def __str__(self):

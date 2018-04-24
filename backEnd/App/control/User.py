@@ -11,9 +11,8 @@ user = Blueprint('user', __name__)
 
 @user.route('/user', methods=['POST'])
 def create_user():
-    content = request.get_json()
 
-    content = format_json(content)
+    content = format_json(request.get_json())
 
     new_user = User()
     new_user.username = content.get("username")
@@ -33,22 +32,46 @@ def login_user():
     # this is not safe at all I know it will be improved if time allows 
     content = format_json(request.get_json())
 
-    if 'username' in list(content.keys()) or 'password' in list(content.keys()):
-        try:
+    try:
+        got_user = User.get(User.username == str(content['username']))
+
+        if got_user.password == content['password'] and got_user.logged_in != True:
+
+            got_user.logged_in = True
+            got_user.save()
+            return json.dumps(got_user.to_dict())
+        else:
+            return Response(status = 226)
+
+    except DoesNotExist:
+        return Response(status = 404)
+
+
+@user.route('/user/logout', methods=['POST'])
+def logout_user():
+    # this is not safe at all I know it will be improved if time allows 
+    content = format_json(request.get_json())
+
+    try:
+        if "id" in content.keys():
+            got_user = User.get(User.id == str(content['id']))
+
+        elif "username" in content.keys():
             got_user = User.get(User.username == str(content['username']))
 
-            if got_user.password == content['password'] and got_user.logged_in != True:
+        if got_user.logged_in == True:
 
-                got_user.logged_in = True
-                got_user.save()
-                return json.dumps(got_user.to_dict())
-            else:
-                return Response(status = 203)
+            got_user.logged_in = False
+            got_user.save()
+            return json.dumps(got_user.to_dict())
+        else:
+            return Response(status = 409)
 
-        except DoesNotExist:
-            return Response(status = 404)
+    except DoesNotExist:
+        return Response(status = 404)
 
     return Response(status=404)
+
 
 
 

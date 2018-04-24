@@ -1,12 +1,13 @@
 import json
 from peewee import *
 from App import db
+from App.Models.Users import User
 
 class Quiz(Model):
 
     quizname = CharField()
     # username should be a foreign key but this will work
-    username = CharField() 
+    userid = ForeignKeyField(User,db_column='user', related_name='quiz', null =False) 
     # time and date feild would be nice for uniqueness. 
 
     def __str__(self):
