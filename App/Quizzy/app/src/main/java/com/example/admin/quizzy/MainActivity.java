@@ -1,8 +1,10 @@
 package com.example.admin.quizzy;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +17,9 @@ import com.squareup.moshi.Types;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
     // bind views
     @BindView(R.id.logoutButton) Button _logoutButton;
+    @BindView(R.id.addSurveyButton) Button _addSurveyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 logOut();
+            }
+        });
+
+        _addSurveyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addSurvey();
             }
         });
 
@@ -98,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
                         try {
+                            // turns a json string into an arraylist of menuitems to be inflated
                             String res = response.body().string();
                             Type listMenuItem = Types.newParameterizedType(List.class, MenuItem.class);
                             JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
@@ -176,6 +189,90 @@ public class MainActivity extends AppCompatActivity {
         public int id;
         public String username;
         public Boolean logged_in;
+    }
+
+    private void addSurvey(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        final int userid = pref.getInt("userid", 0);
+
+        // this is a datetime string to make sure quiz names are unique
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Date now = new Date();
+        String date = sdfDate.format(now);
+
+        MediaType mediaType = MediaType.parse("application/json");
+        RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\" : \"" +
+                "New Quiz " +
+                date +
+                "\",\n\t\"userid\" : \"" +
+                 userid +
+                "\"\n}");
+        Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/quiz")
+                .post(body)
+                .addHeader("Content-Type", "application/json")
+                .addHeader("Cache-Control", "no-cache")
+                .addHeader("Postman-Token", "d6970e83-6404-4cc1-b2cf-e3a0738c07b3")
+                .build();
+
+        client.newCall(request)
+                .enqueue(new Callback() {
+                    @Override
+                    public void onFailure(final Call call, IOException e) {
+                        // Error
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                // main thread stuff here
+                                addFailed();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onResponse(Call call, final Response response) {
+                        try {
+                            String res = response.body().string();
+                            // use moshi to turn it into an object for easy access
+                            JsonAdapter<addSurveyResponse> jsonAdapter = moshi.adapter(addSurveyResponse.class);
+                            // throws JsonDataException if it doesn't fit in response class
+                            addSurveyResponse a = jsonAdapter.fromJson(res);
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // main thread stuff here
+                                    Intent intent = new Intent(MainActivity.this, CreateSurveyActivity.class);
+                                    intent.putExtra("surveyid", a.id);
+                                    intent.putExtra("surveyname", a.quizname);
+                                    MainActivity.this.startActivity(intent);
+                                }
+                            });
+                        } catch (JsonDataException ignored) {
+                            addFailed();
+                        } catch (IOException ignored) {
+                            addFailed();
+                        }
+                    }
+                });
+
+    }
+
+    private void addFailed(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage("Failed to create survey.");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+    }
+
+    static class addSurveyResponse {
+        String quizname;
+        int userid;
+        int id;
     }
 
 }

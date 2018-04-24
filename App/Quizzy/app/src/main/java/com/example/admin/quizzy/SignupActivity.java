@@ -114,6 +114,7 @@ public class SignupActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("name", name);
         editor.putString("email", email);
+        editor.putInt("userid", userid);
         editor.putBoolean("logged_in", true);
         editor.apply();
 
@@ -220,6 +221,7 @@ public class SignupActivity extends AppCompatActivity {
                             signupResponse s = jsonAdapter.fromJson(res);
                             // if we get here signup is successful
                             if(s.logged_in) {
+                                userid = s.id;
                                 signupSuccess();
                             }
                         } catch(JsonDataException e){
