@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class SurveyItem {
 
     private String _question;
-    private int _numResponses;
+    private int _numResponses;  // Must guarantee this to be 1 at the minimum
     private ArrayList<String> _responses;
     static public final int MAX_RESPONSES = 6;
 
@@ -24,8 +24,8 @@ public class SurveyItem {
             _numResponses = numResponses;
         }
         _question = "";
-        _responses = new ArrayList<String>(numResponses);
-        for(int i = 0; i < numResponses; i++) {
+        _responses = new ArrayList<String>(_numResponses);
+        for(int i = 0; i < _numResponses; i++) {
             _responses.add("");
         }
     }
@@ -65,5 +65,22 @@ public class SurveyItem {
             _responses.set(index, value);
             return true;
         }
+    }
+
+    public String toJson() {
+        String jsonString = "{";
+
+        jsonString += "\"question\": " + "\"" + _question + "\",";
+        jsonString += "\"responses\": [";
+        for (int i = 0; i < _responses.size(); i++) {
+            jsonString += "\"" + _responses.get(i) + "\"";
+            if(i < (_responses.size() - 1)) {
+                jsonString += ",";
+            }
+        }
+        jsonString += "]";
+
+        jsonString += "}";
+        return jsonString;
     }
 }
