@@ -236,7 +236,7 @@ public class MainActivity extends AppCompatActivity {
                             // use moshi to turn it into an object for easy access
                             JsonAdapter<addSurveyResponse> jsonAdapter = moshi.adapter(addSurveyResponse.class);
                             // throws JsonDataException if it doesn't fit in response class
-                            addSurveyResponse a = jsonAdapter.fromJson(res);
+                            final addSurveyResponse a = jsonAdapter.fromJson(res);
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
