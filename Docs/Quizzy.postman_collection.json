@@ -92,7 +92,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"newquizname\" : \"coolguyquiz\",\n\t\"quizname\":\"dogs\"\n\t\n}"
+					"raw": "{\n\t\"id\" : 3,\n\t\"newquizname\":\"dogs\",\n\t\"published\" : false\n}"
 				},
 				"url": {
 					"raw": "http://127.0.0.1:5000/quiz",
@@ -124,16 +124,18 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"quizid\" : 12,\n\t\"questiontext\": \"what is postmodernism?\"\n}"
+					"raw": "{\n\t\"quizid\" : 1,\n\t\"questiontext\": \"Why are you here?\"\n}"
 				},
 				"url": {
-					"raw": "http://quizzybackend.herokuapp.com/quiz/questiontext",
+					"raw": "http://127.0.0.1:5000/quiz/questiontext",
 					"protocol": "http",
 					"host": [
-						"quizzybackend",
-						"herokuapp",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "5000",
 					"path": [
 						"quiz",
 						"questiontext"
@@ -187,16 +189,18 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"quizname\" : \"the quiz to end all!\",\n\t\"userid\" : \"2\"\n}"
+					"raw": "{\n\t\"quizname\" : \"Test\",\n\t\"userid\" : \"1\",\n\t\"published\" : True\n}"
 				},
 				"url": {
-					"raw": "http://quizzybackend.herokuapp.com/quiz",
+					"raw": "http://127.0.0.1:5000/quiz",
 					"protocol": "http",
 					"host": [
-						"quizzybackend",
-						"herokuapp",
-						"com"
+						"127",
+						"0",
+						"0",
+						"1"
 					],
+					"port": "5000",
 					"path": [
 						"quiz"
 					]
@@ -361,7 +365,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"username\" : \"jacob\",\n\t\"password\" :\"montpetit\"\n}"
+					"raw": "{\n\t\"username\" : \"jacob\",\n}"
 				},
 				"url": {
 					"raw": "http://quizzybackend.herokuapp.com/user/logout",
@@ -377,6 +381,89 @@
 					]
 				},
 				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "mass assignment raw",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"quizname\": \"test survey\",\n  \"userid\" : 1,\n  \"questions\": [\n    {\n      \"text\": \"Does this survey work?\",\n      \"answers\": [\n      \t{\"text\": \"True\"},\n        {\"text\": \"False\"}\n      ]\n    },\n    {\n      \"text\": \"How do you like this survey?\",\n      \"answers\": [\n        {\"text\" : \"\"}\n      ]\n    },\n    {\n      \"text\": \"How many times have you tested this survey?\",\n      \"answers\": [\n        {\"text\": \"1\"},\n        {\"text\": \"2\"},\n        {\"text\": \"1,000,000,000\"},\n        {\"text\":\"Who cares\"}\n      ]\n    },\n    {\n      \"text\": \"Why are you here?\",\n      \"answers\": [\n        {\"text\": \"To kick ass\"},\n        {\"text\": \"To chew bubble gum\"}\n      ]\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:5000/quiz/all",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"quiz",
+						"all"
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "quiz/published",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/quiz/published",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"quiz",
+						"published"
+					]
+				},
+				"description": "gets all the published quizzes"
+			},
+			"response": []
+		},
+		{
+			"name": "delete quiz",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "http://127.0.0.1:5000/quiz/2",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "5000",
+					"path": [
+						"quiz",
+						"2"
+					]
+				},
+				"description": "deletes the quiz with all the data it comes with"
 			},
 			"response": []
 		}
