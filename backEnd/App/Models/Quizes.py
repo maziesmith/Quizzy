@@ -10,6 +10,8 @@ class Quiz(Model):
     userid = ForeignKeyField(User,db_column='user', related_name='quiz', null =False) 
     # time and date feild would be nice for uniqueness. 
 
+    published = BooleanField(null = False, default = False)
+
     def __str__(self):
         return json.dumps(self.__dict__["__data__"])
 

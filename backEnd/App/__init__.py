@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_cors import CORS
-from peewee import MySQLDatabase
+from peewee import PostgresqlDatabase
 
 import config
 
@@ -10,7 +10,7 @@ App = Flask(__name__)
 cors = CORS(App, resources={r"/*": {"origins": "*"}})
 
 # host=config.DB_LOCATION port=config.DB_PORT
-db = MySQLDatabase(
+db = PostgresqlDatabase(
     database=config.DB_NAME,
     user=config.DB_USERNAME, password=config.DB_PASSWORD, host=config.DB_LOCATION, port=config.DB_PORT)
 
@@ -25,10 +25,11 @@ from App.Models.QuestionAnswer import QuestionAnswer
 
 
 # db.drop_tables(
-# 	[User,
-# 	 Quiz,
+# 	 [Quiz, 
+# 	  User,
 # 	 QuestionText,
-# 	 QuestionAnswer], safe = True)
+# 	 QuestionAnswer],
+# 	 safe = True)
 
 db.create_tables(
 	[User,
