@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -23,6 +24,7 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -42,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
 
     // bind views
     @BindView(R.id.logoutButton) Button _logoutButton;
-    @BindView(R.id.addSurveyButton) Button _addSurveyButton;
+    @BindView(R.id.addSurveyButton) FloatingActionButton _addSurveyButton;
+    @BindView(R.id.menuList) ListView _listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
 
         // bind the view
-        ListView _listView = (ListView) findViewById(R.id.menuList);
+        ButterKnife.bind(this);
 
         // set adapter for listview
         _listView.setAdapter(adapter);
@@ -71,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
                 logOut();
             }
         });
+
+        _logoutButton.setEnabled(true);
 
         _addSurveyButton.setOnClickListener(new View.OnClickListener() {
             @Override
