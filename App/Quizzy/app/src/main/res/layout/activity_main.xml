@@ -1,62 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.admin.quizzy.MainActivity">
+    tools:context=".MainActivity"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:baselineAligned="false"
-        android:weightSum="10">
-
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
         <TextView
-            android:id="@+id/allSurveys"
-            android:layout_width="match_parent"
+            android:id="@+id/mainMenuUsernameView"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/all_surveys"
-            android:textSize="24sp"
-            android:layout_weight="1"
-            tools:text="All Surveys" />
+            android:layout_gravity="center_vertical"
+            android:maxLength="19"
+            tools:text="Main Menu Username"
+            android:textSize="20sp"
+            android:layout_weight="3"/>
 
-        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/menuList"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="8"
-            android:drawSelectorOnTop="true"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-            <Button
-                android:id="@+id/logoutButton"
-                android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_gravity="bottom"
-                android:enabled="false"
-                android:text="@string/log_out" />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/addSurveyButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginHorizontal="10dp"
-                android:clickable="true"
-                android:focusable="true"
-                app:srcCompat="@android:drawable/ic_menu_add" />
-        </RelativeLayout>
-
-
+        <Button
+            android:id="@+id/mainMenuLogoutButton"
+            android:layout_width="0dp"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:text="@string/log_out"
+            android:layout_weight="1"/>
 
     </LinearLayout>
-</android.support.constraint.ConstraintLayout>
+    <android.support.v4.view.ViewPager
+        android:id="@+id/mainMenuPager"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="10">
+        <android.support.v4.view.PagerTitleStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="#111"
+            android:textColor="#fff"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+
+    </android.support.v4.view.ViewPager>
+</LinearLayout>
