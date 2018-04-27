@@ -18,7 +18,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Admin on 3/19/2018.
@@ -30,11 +45,16 @@ public class CreateSurveyActivity extends AppCompatActivity
     private SurveyItemAdapter _adapter;
     private RetainedFragment _dataFragment;
     private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
+    private static final String TAG = "DEBUG";
+
+    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_survey);
+
+        int surveyId = 2;
 
         FragmentManager fm = getSupportFragmentManager();
         _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_RETAINED_FRAGMENT);
@@ -42,6 +62,7 @@ public class CreateSurveyActivity extends AppCompatActivity
             _dataFragment = new RetainedFragment();
             fm.beginTransaction().add(_dataFragment, TAG_RETAINED_FRAGMENT).commit();
             _dataFragment.setData(new ArrayList<SurveyItem>());
+            getSurvey(surveyId);
         }
 
         _adapter = new SurveyItemAdapter(this, _dataFragment.getData());
@@ -143,6 +164,73 @@ public class CreateSurveyActivity extends AppCompatActivity
 
         jsonString += "}";
         return jsonString;
+    }
+
+    private void getSurvey(int id) {
+        Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/quiz/" + id)
+                .get()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onFailure: " + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                String jsonResponse = body.string();
+                Log.d(TAG, "onResponse: " + jsonResponse);
+                body.close();
+                final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        _dataFragment.setData(data);
+                        _adapter.addAll(data);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private ArrayList<SurveyItem> parseSurvey(String json) {
+        ArrayList<SurveyItem> surveyItems = new ArrayList<SurveyItem>();
+
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject fullJson = parser.parse(json).getAsJsonObject();
+            // Find the array of survey questions in the json
+            JsonArray itemsArray = fullJson.getAsJsonArray("questions");
+
+            // Build a SurveyItem from each array element
+            for (int i = 0; i < itemsArray.size(); i++) {
+                JsonObject item = itemsArray.get(i).getAsJsonObject();
+                int questionId = item.getAsJsonPrimitive("id").getAsInt();
+                String questionText = item.getAsJsonPrimitive("text").getAsString();
+                JsonArray responseArray = item.getAsJsonArray("answers");
+
+                String[] questionResponses = new String[responseArray.size()];
+                int[] responseIds = new int[responseArray.size()];
+                for (int j = 0; j < responseArray.size(); j++) {
+                    JsonObject response = responseArray.get(j).getAsJsonObject();
+                    String responseText = response.getAsJsonPrimitive("text").getAsString();
+                    int responseId = response.getAsJsonPrimitive("id").getAsInt();
+                    questionResponses[j] = responseText;
+                    responseIds[j] = responseId;
+                }
+
+                SurveyItem newItem = new SurveyItem(questionText, questionResponses);
+                surveyItems.add(newItem);
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "parseSurvey: " + e);
+        }
+
+        return surveyItems;
     }
 
 
