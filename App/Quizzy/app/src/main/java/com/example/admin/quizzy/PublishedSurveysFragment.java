@@ -1,4 +1,4 @@
 package com.example.admin.quizzy;
 
-public class PublishedSurveysFragment {
+public class PublishedSurveysFragment extends SurveysFragment {
 }
