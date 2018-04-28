@@ -46,6 +46,7 @@ public class CreateSurveyActivity extends AppCompatActivity
     private RetainedFragment _dataFragment;
     private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
     private static final String TAG = "DEBUG";
+    private int _surveyId;
 
     private final OkHttpClient client = new OkHttpClient();
 
@@ -54,7 +55,7 @@ public class CreateSurveyActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_survey);
 
-        int surveyId = 2;
+        _surveyId = 2;
 
         FragmentManager fm = getSupportFragmentManager();
         _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_RETAINED_FRAGMENT);
@@ -62,7 +63,7 @@ public class CreateSurveyActivity extends AppCompatActivity
             _dataFragment = new RetainedFragment();
             fm.beginTransaction().add(_dataFragment, TAG_RETAINED_FRAGMENT).commit();
             _dataFragment.setData(new ArrayList<SurveyItem>());
-            getSurvey(surveyId);
+            getSurvey(_surveyId);
         }
 
         _adapter = new SurveyItemAdapter(this, _dataFragment.getData());
@@ -83,10 +84,38 @@ public class CreateSurveyActivity extends AppCompatActivity
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(CreateSurveyActivity.this, "Save Successful:\n\n" + dataToJson(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(CreateSurveyActivity.this, "Save Successful:\n\n" + dataToJson(), Toast.LENGTH_LONG).show();
                 Log.i("SAVING", "onClick: " + dataToJson());
-            }
-        });
+
+                RequestBody body = RequestBody.create(MediaType.parse("application/json"), dataToJson());
+                Request request = new Request.Builder()
+                        .url("http://quizzybackend.herokuapp.com/quiz/all")
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Cache-Control", "no-cache")
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG, "onFailure: " + e);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        ResponseBody returnedBody = response.body();
+                        String jsonResponse = returnedBody.string();
+                        Log.d(TAG, "onResponse: " + jsonResponse);
+                        returnedBody.close();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(CreateSurveyActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }  // onClick
+        });  // setOnClickListener
     }
 
     @Override
@@ -150,8 +179,10 @@ public class CreateSurveyActivity extends AppCompatActivity
         String jsonString = "{";
 
         TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
-        jsonString += "\"title\": " + "\"" + titleView.getText().toString() + "\",";
-        jsonString += "\"items\": [";
+        jsonString += "\"id\": " + _surveyId + ",";
+        jsonString += "\"quizname\": " + "\"" + titleView.getText().toString() + "\",";
+        jsonString += "\"userid\": " + "1" + ",";
+        jsonString += "\"questions\": [";
 
         ArrayList<SurveyItem> items = _adapter.getData();
         for(int i = 0; i < items.size(); i++) {
@@ -184,16 +215,33 @@ public class CreateSurveyActivity extends AppCompatActivity
                 Log.d(TAG, "onResponse: " + jsonResponse);
                 body.close();
                 final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                final String title = parseSurveyTitle(jsonResponse);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         _dataFragment.setData(data);
                         _adapter.addAll(data);
+                        TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
+                        titleView.setText(title);
                     }
                 });
             }
         });
 
+    }
+
+    private String parseSurveyTitle(String json) {
+        String title = "";
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject fullJson = parser.parse(json).getAsJsonObject();
+            title = fullJson.getAsJsonPrimitive("quizname").getAsString();
+
+        } catch (Exception e) {
+            Log.d(TAG, "parseSurveyTitle: " + e);
+        }
+
+        return title;
     }
 
     private ArrayList<SurveyItem> parseSurvey(String json) {
@@ -222,7 +270,7 @@ public class CreateSurveyActivity extends AppCompatActivity
                     responseIds[j] = responseId;
                 }
 
-                SurveyItem newItem = new SurveyItem(questionText, questionResponses);
+                SurveyItem newItem = new SurveyItem(questionText, questionResponses, questionId, responseIds);
                 surveyItems.add(newItem);
             }
 

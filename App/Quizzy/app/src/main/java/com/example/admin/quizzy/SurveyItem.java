@@ -11,9 +11,12 @@ import java.util.ArrayList;
 public class SurveyItem {
 
     private String _question;
+    private int _questionId;
     private int _numResponses;  // Must guarantee this to be 1 at the minimum
     private ArrayList<String> _responses;
+    private int[] _responseIds;
     static public final int MAX_RESPONSES = 6;
+    static public final int DEFAULT_ID = -1;
 
     public SurveyItem(int numResponses) {
         if(numResponses < 1) {
@@ -24,13 +27,21 @@ public class SurveyItem {
             _numResponses = numResponses;
         }
         _question = "";
+        _questionId = DEFAULT_ID;
         _responses = new ArrayList<String>(_numResponses);
+        _responseIds = new int[_numResponses];
         for(int i = 0; i < _numResponses; i++) {
             _responses.add("");
+            _responseIds[i] = DEFAULT_ID;
         }
     }
 
-    public SurveyItem(String question, String[] responses) {
+    public SurveyItem(String question, String[] responses, int questionId, int[] responseIds) throws IllegalArgumentException{
+
+        if(responses.length != responseIds.length) {
+            throw new IllegalArgumentException("SurveyItem: Array arguments must contain the same number of items");
+        }
+
         _responses = new ArrayList<String>();
 
         if(responses.length < 1) {
@@ -41,7 +52,13 @@ public class SurveyItem {
             }
         }
         _question = question;
+        _questionId = questionId;
         _numResponses = _responses.size();
+
+        _responseIds = new int[_numResponses];
+        for (int i = 0; i < _responseIds.length; i++) {
+            _responseIds[i] = responseIds[i];
+        }
     }
 
     public int getNumResponses() { return  _numResponses; }
@@ -70,10 +87,23 @@ public class SurveyItem {
     public String toJson() {
         String jsonString = "{";
 
-        jsonString += "\"question\": " + "\"" + _question + "\",";
-        jsonString += "\"responses\": [";
+        if (_questionId != DEFAULT_ID) {  // omit id field if default value
+            jsonString += "\"id\": " + _questionId + ",";
+        }
+        jsonString += "\"text\": " + "\"" + _question + "\",";
+        jsonString += "\"answers\": [";
         for (int i = 0; i < _responses.size(); i++) {
-            jsonString += "\"" + _responses.get(i) + "\"";
+            jsonString += "{";
+
+            if (_responseIds[i] != DEFAULT_ID) {  // omit id field if default value
+                jsonString += "\"id\": " + _responseIds[i] + ",";
+            }
+            if (_questionId != DEFAULT_ID) {
+                jsonString += "\"questiontextid\": " + _questionId + ",";
+            }
+            jsonString += "\"text\": " + "\"" + _responses.get(i) + "\"";
+
+            jsonString += "}";
             if(i < (_responses.size() - 1)) {
                 jsonString += ",";
             }
