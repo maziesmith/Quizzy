@@ -9,6 +9,7 @@ public class MenuItem {
     private int id;
     private String quizname;
     private int userid;
+    private Boolean published;
 
     public MenuItem(String quizname, int surveyid) {
         this.quizname = quizname;
