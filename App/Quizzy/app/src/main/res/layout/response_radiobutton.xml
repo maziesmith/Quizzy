@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This should be identical to the RadioButton elements in the
+     responses section of take_survey_list_item_boolean.xml.
+     It is meant to be another one of them that can be appended
+     to that section to create more response fields. -->
+<RadioButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:hint="@string/response_hint"
+    android:textAppearance="?android:textAppearanceSmall"/>
