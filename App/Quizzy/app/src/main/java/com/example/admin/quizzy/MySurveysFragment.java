@@ -18,9 +18,17 @@ import butterknife.OnClick;
 public class MySurveysFragment  extends SurveysFragment {
     public MySurveysFragment() {}
 
+    @OnClick(R.id.addSurveyButton)
+    public void run() {
+        addSurvey(false);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_surveys, parent, false);
+
+        // bind the view
+        ButterKnife.bind(this, rootView);
 
         // Create a list of surveys
         final ArrayList<MenuItem> menuItems = new ArrayList<>();
@@ -34,19 +42,9 @@ public class MySurveysFragment  extends SurveysFragment {
         // Create the adapter
         MenuItemAdapter adapter = new MenuItemAdapter(getActivity(), menuItems);
 
-        // bind the view
-        ButterKnife.bind(this, rootView);
-
         // set adapter for listview
         _listView.setAdapter(adapter);
 
         return rootView;
     }
-
-    int getUserId(){
-        SharedPreferences pref = getActivity().getSharedPreferences("quizzy.pref", 0);
-        return pref.getInt("userid", 0);
-
-    }
-
 }

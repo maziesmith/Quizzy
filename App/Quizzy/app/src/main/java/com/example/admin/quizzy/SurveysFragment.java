@@ -1,5 +1,6 @@
 package com.example.admin.quizzy;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
@@ -45,32 +48,34 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
 
-    // context
-    final FragmentActivity activity = getActivity();
-
     // bind views
     @BindView(R.id.addSurveyButton)
     FloatingActionButton _addSurveyButton;
     @BindView(R.id.menuList)
     ListView _listView;
 
-    @OnClick(R.id.addSurveyButton)
-    public void addSurvey(){
-        SharedPreferences pref = getActivity().getSharedPreferences("quizzy.pref", 0);
-        final int userid = pref.getInt("userid", 0);
+    public void addSurvey(Boolean published){
+        Log.d(TAG, "Adding Survey");
+        final int userid = getUserId();
+        String date = getDateString();
 
-        // this is a datetime string to make sure quiz names are unique
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date now = new Date();
-        String date = sdfDate.format(now);
+        // context
+        final FragmentActivity activity = getActivity();
+
+        // create ProgressDialog when logging in
+        final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Adding...");
+        progressDialog.show();
 
         MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\" : \"" +
-                "New Quiz " +
-                date +
-                "\",\n\t\"userid\" : \"" +
+        RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\": \"" +
+                "New" + date +
+                "\",\n\t\"userid\": \"" +
                 userid +
-                "\"\n}");
+                "\",\n\t\"published\": " +
+                published +
+                "\n}");
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/quiz")
                 .post(body)
@@ -83,45 +88,90 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                 .enqueue(new Callback() {
                     @Override
                     public void onFailure(final Call call, IOException e) {
-                        // Error
-                        activity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // main thread stuff here
-                                addFailed();
-                            }
-                        });
+                        addFailed(progressDialog);
                     }
-
                     @Override
                     public void onResponse(Call call, final Response response) {
                         try {
-                            String res = response.body().string();
-                            // use moshi to turn it into an object for easy access
-                            JsonAdapter<addSurveyResponse> jsonAdapter = moshi.adapter(addSurveyResponse.class);
-                            // throws JsonDataException if it doesn't fit in response class
-                            final addSurveyResponse a = jsonAdapter.fromJson(res);
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // main thread stuff here
-                                    Intent intent = new Intent(getActivity(), CreateSurveyActivity.class);
-                                    intent.putExtra("surveyid", a.id);
-                                    intent.putExtra("surveyname", a.quizname);
-                                    getActivity().startActivity(intent);
-                                }
-                            });
-                        } catch (JsonDataException ignored) {
-                            addFailed();
-                        } catch (IOException ignored) {
-                            addFailed();
+                            addSurveyResponse a = parseResponse(response);
+                            addSuccess(a, progressDialog);
+                        } catch (Exception e){
+                            Log.d(TAG, "Exception: " + e);
+                            addFailed(progressDialog);
                         }
                     }
                 });
 
     }
 
+    private void addSuccess(final addSurveyResponse a, final ProgressDialog progressDialog){
+        // context
+        final FragmentActivity activity = getActivity();
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Add Succeeded");
+                progressDialog.dismiss();
+                Intent intent = new Intent(activity, CreateSurveyActivity.class);
+                intent.putExtra("surveyid", a.userid);
+                intent.putExtra("surveyname", a.quizname);
+                Log.d(TAG, "Extras for intent: " + a.userid + " " + a.quizname);
+                getActivity().startActivity(intent);
+            }
+        });
+    }
+
+    private void addFailed(final ProgressDialog progressDialog){
+        // context
+        final FragmentActivity activity = getActivity();
+
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Add Failed");
+                progressDialog.dismiss();
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                builder.setMessage("Failed to create survey.");
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
+    }
+
+    addSurveyResponse parseResponse(Response response) throws Exception{
+        int code = response.code();
+        Log.d(TAG, "Response is code " + code);
+        JsonParser parser = new JsonParser();
+        if(code == 200) {
+            // turn our result into a string
+            String res = response.body().string();
+            Log.d(TAG, "Response is " + res);
+            JsonObject json = parser.parse(res).getAsJsonObject();
+            return new addSurveyResponse(code, json.get("quizname").getAsString(),
+                    json.get("userid").getAsInt(), json.get("id").getAsInt());
+        }else {
+            Log.d(TAG, "Code was not 200");
+            return new addSurveyResponse(code, "", 0, 0);
+        }
+    }
+
+    static class addSurveyResponse {
+        int code;
+        String quizname;
+        int userid;
+        int surveyid;
+        addSurveyResponse(int code, String quizname, int userid, int surveyid){
+            this.code = code;
+            this.quizname=quizname;
+            this.userid=userid;
+            this.surveyid=surveyid;
+        }
+    }
+
     public void populateFromUrl(String url, final ArrayList<MenuItem> m){
+        // context
+        final FragmentActivity activity = getActivity();
         Log.d(TAG, "Url for request is http://quizzybackend.herokuapp.com/quiz/" + url);
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/quiz/" + url)
@@ -146,7 +196,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     }
 
                     @Override
-                    public void onResponse(Call call, final Response response) throws IOException {
+                    public void onResponse(Call call, final Response response) {
                         try {
                             // turns a json string into an arraylist of menuitems to be inflated
                             String res = response.body().string();
@@ -161,33 +211,26 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
 
     }
 
-    public void populate(ArrayList<MenuItem> m, String jsonInput) throws Exception{
+    public void populate(final ArrayList<MenuItem> m, final String jsonInput) throws Exception{
+        // context
+        final FragmentActivity activity = getActivity();
         Log.d(TAG, "Populating arraylist...");
         Type listMenuItem = Types.newParameterizedType(List.class, MenuItem.class);
-        JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
+        final JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
         m.addAll(adapter.fromJson(jsonInput));
         Log.d(TAG, "Populated");
     }
 
-
-
-    private void addFailed(){
-        activity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setMessage("Failed to create survey.");
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+    int getUserId(){
+        SharedPreferences pref = getActivity().getSharedPreferences("quizzy.pref", 0);
+        return pref.getInt("userid", 0);
     }
 
-    static class addSurveyResponse {
-        String quizname;
-        int userid;
-        int id;
-        Boolean published;
+    // the date string makes sure the survey names are unique when making them
+    String getDateString(){
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Date now = new Date();
+        return sdfDate.format(now);
     }
 
 }

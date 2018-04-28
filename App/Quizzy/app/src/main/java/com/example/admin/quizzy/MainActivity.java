@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -51,6 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.mainMenuUsernameView)
     TextView _usernameView;
+
+    @OnClick(R.id.mainMenuRefreshButton)
+    public void refreshUI(){
+        finish();
+        startActivity(getIntent());
+    }
 
     @OnClick(R.id.mainMenuLogoutButton)
     public void logOut(){

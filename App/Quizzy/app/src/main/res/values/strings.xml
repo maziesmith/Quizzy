@@ -21,4 +21,5 @@
     <string name="my_surveys">My Surveys</string>
     <string name="published_surveys">Published Surveys</string>
     <string name="username">Username</string>
+    <string name="refresh">Refresh</string>
 </resources>

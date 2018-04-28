@@ -23,7 +23,7 @@ public class PublishedSurveysFragment extends SurveysFragment {
 
     @OnClick(R.id.addSurveyButton)
     public void run() {
-        addSurvey();
+        addSurvey(false);
     }
 
     @Override
