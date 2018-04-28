@@ -63,7 +63,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
         final FragmentActivity activity = getActivity();
 
         // create ProgressDialog when logging in
-        final ProgressDialog progressDialog = new ProgressDialog(getActivity(), R.style.AppTheme);
+        final ProgressDialog progressDialog = new ProgressDialog(activity, R.style.AppTheme);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Adding...");
         progressDialog.show();
@@ -117,7 +117,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                 intent.putExtra("surveyid", a.userid);
                 intent.putExtra("surveyname", a.quizname);
                 Log.d(TAG, "Extras for intent: " + a.userid + " " + a.quizname);
-                getActivity().startActivity(intent);
+                activity.startActivity(intent);
             }
         });
     }
@@ -190,7 +190,6 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                             public void run() {
                                 // main thread stuff here
                                 Log.d(TAG, "Failed the call");
-
                             }
                         });
                     }
@@ -212,8 +211,6 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     }
 
     public void populate(final ArrayList<MenuItem> m, final String jsonInput) throws Exception{
-        // context
-        final FragmentActivity activity = getActivity();
         Log.d(TAG, "Populating arraylist...");
         Type listMenuItem = Types.newParameterizedType(List.class, MenuItem.class);
         final JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
@@ -222,7 +219,9 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     }
 
     int getUserId(){
-        SharedPreferences pref = getActivity().getSharedPreferences("quizzy.pref", 0);
+        // context
+        final FragmentActivity activity = getActivity();
+        SharedPreferences pref = activity.getSharedPreferences("quizzy.pref", 0);
         return pref.getInt("userid", 0);
     }
 

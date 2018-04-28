@@ -3,7 +3,9 @@ package com.example.admin.quizzy;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +27,9 @@ public class MySurveysFragment  extends SurveysFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        // context
+        final FragmentActivity activity = getActivity();
+
         View rootView = inflater.inflate(R.layout.fragment_surveys, parent, false);
 
         // bind the view
@@ -40,10 +45,18 @@ public class MySurveysFragment  extends SurveysFragment {
         populateFromUrl("mine/" + userid, menuItems);
 
         // Create the adapter
-        MenuItemAdapter adapter = new MenuItemAdapter(getActivity(), menuItems);
+        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
 
-        // set adapter for listview
-        _listView.setAdapter(adapter);
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // set adapter for listview
+                _listView.setAdapter(adapter);
+            }
+        }, 5000);
+
+
 
         return rootView;
     }
