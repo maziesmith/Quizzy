@@ -1,12 +1,19 @@
 package com.example.admin.quizzy;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
@@ -15,6 +22,7 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -29,6 +37,7 @@ import okhttp3.Response;
  */
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "Quizzy_MainDebug";
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
@@ -37,56 +46,33 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.mainMenuPager)
     ViewPager mainManuPager;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    @BindView(R.id.mainMenuLogoutButton)
+    Button _logoutButton;
 
-        // bind everything
-        ButterKnife.bind(this);
+    @BindView(R.id.mainMenuUsernameView)
+    TextView _usernameView;
 
-        //if not logged in, go to loginactivity
-        if(!loggedIn()){
-            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-            startActivity(intent);
-        }
-
-        //set username view
-
-        //set onclick for logout
-
-        // set up viewpager
-        SurveyFragmentAdapter adapter = new SurveyFragmentAdapter(this, getSupportFragmentManager());
-        mainManuPager.setAdapter(adapter);
-    }
-
-    // look in shareprefs for logged_in
-    Boolean loggedIn(){
-        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
-                "quizzy.pref", Context.MODE_PRIVATE);
-        return prefs.getBoolean("logged_in", false);
-    }
-
-    @Override
-    public void onBackPressed() {
-        // disable going back to the menu
-        moveTaskToBack(true);
-    }
-
-    // onclick for log out button
-    private void logOut(){
+    @OnClick(R.id.mainMenuLogoutButton)
+    public void logOut(){
         OkHttpClient client = new OkHttpClient();
 
         MediaType mediaType = MediaType.parse("application/json");
 
-        // get email to log out
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-        final String email = pref.getString("username", null);
+        _logoutButton.setEnabled(false);
+
+        // create ProgressDialog when logging in
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
+                R.style.AppTheme);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Logging out...");
+        progressDialog.show();
+
+        // get username to log out
+        final String username = getUsername();
 
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\" : \"" +
-                email +
+                username +
                 "\"}");
-
 
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/user/logout")
@@ -105,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                // main thread stuff here
+                                logoutFailed(progressDialog);
                             }
                         });
                     }
@@ -113,34 +99,124 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
                         try {
-                            String res = response.body().string();
-
-                            // use moshi to turn it into an object for easy access
-                            JsonAdapter<logoutResponse> jsonAdapter = moshi.adapter(logoutResponse.class);
-                            // throws JsonDataException if it doesn't fit in response class
-                            logoutResponse l = jsonAdapter.fromJson(res);
-                            if(l != null && !l.logged_in){
-                                // write email and logged in flag to shared pref
-                                SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putBoolean("logged_in", false);
-                                editor.apply();
-
-                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                startActivity(intent);
-
+                            logoutResponse l = parseResponse(response);
+                            if(!l.logged_in){
+                                logoutSuccess(progressDialog);
                             }
-                        } catch (JsonDataException ignored) {
-                        } catch (IOException ignored) {
+                        } catch (Exception e){
+                            Log.d(TAG, "Exception: " + e);
+                            logoutFailed(progressDialog);
                         }
                     }
                 });
     }
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // bind everything
+        ButterKnife.bind(this);
+
+        //if not logged in, go to loginactivity
+        if(!loggedIn()){
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+
+        //set username view
+        String username = getUsername();
+        _usernameView.setText(username);
+
+        // set up viewpager
+        SurveyFragmentAdapter adapter = new SurveyFragmentAdapter(this, getSupportFragmentManager());
+        mainManuPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // disable going back to the menu
+        moveTaskToBack(true);
+    }
+
+    String getUsername(){
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        return pref.getString("username", null);
+    }
+
+    // look in shareprefs for logged_in
+    Boolean loggedIn(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
+        return prefs.getBoolean("logged_in", false);
+    }
+
+    void setLogged_In(Boolean logged_in){
+        // write email and logged in flag to shared pref
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("logged_in", logged_in);
+        editor.apply();
+    }
+
+    logoutResponse parseResponse(Response response) throws Exception {
+        int code = response.code();
+        Log.d(TAG, "Response is code " + code);
+        JsonParser parser = new JsonParser();
+        if(code == 200) {
+            Log.d(TAG, "Code " + code + "means we parse JSON");
+            // turn our result into a string
+            String res = response.body().string();
+            Log.d(TAG, "Response is " + res);
+            JsonObject json = parser.parse(res).getAsJsonObject();
+            Log.d(TAG, "Parsed json");
+            return new logoutResponse(code, json.get("id").getAsInt(),
+                    json.get("username").getAsString(), json.get("logged_in").getAsBoolean());
+        } else {
+            Log.d(TAG, "Code was not 200");
+            return new logoutResponse(code, 0, "", false);
+        }
+    }
+
+    void logoutSuccess(final ProgressDialog progressDialog) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                progressDialog.dismiss();
+                _logoutButton.setEnabled(true);
+                Log.d(TAG, "sending us from mainactivity to login");
+                setLogged_In(false);
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    void logoutFailed(final ProgressDialog progressDialog) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Log out fail");
+                progressDialog.dismiss();
+                Toast.makeText(getBaseContext(), "Logout failed", Toast.LENGTH_LONG).show();
+                _logoutButton.setEnabled(true);
+            }
+        });
+
+    }
+
     static class logoutResponse{
-        public int id;
-        public String username;
-        public Boolean logged_in;
+        int code;
+        int userid;
+        String username;
+        Boolean logged_in;
+        logoutResponse(int code, int userid, String username, Boolean logged_in){
+            this.code=code;
+            this.userid=userid;
+            this.username=username;
+            this.logged_in=logged_in;
+        }
     }
 
 }

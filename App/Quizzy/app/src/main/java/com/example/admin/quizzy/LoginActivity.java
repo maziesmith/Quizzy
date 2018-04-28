@@ -15,11 +15,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.JsonDataException;
-import com.squareup.moshi.Moshi;
 
-import java.io.EOFException;
 import java.io.IOException;
 
 import butterknife.ButterKnife;
@@ -41,7 +37,7 @@ import okhttp3.Response;
 // Adapted from: https://sourcey.com/beautiful-android-login-and-signup-screens-with-material-design/
 
 public class LoginActivity extends AppCompatActivity {
-    private static final String TAG = "QUIZZYDEBUG";
+    private static final String TAG = "Quizzy_LoginDebug";
     // flag to see if we need to signup
     private static final int SIGNUP = 0;
 
@@ -49,7 +45,7 @@ public class LoginActivity extends AppCompatActivity {
     private final OkHttpClient client = new OkHttpClient();
 
     // bind views
-    @BindView(R.id.input_email) EditText _usernameView;
+    @BindView(R.id.input_username) EditText _usernameView;
     @BindView(R.id.input_password) EditText _passwordView;
     @BindView(R.id.btn_login) Button _loginButton;
     @BindView(R.id.link_signup) TextView _signupButton;
@@ -211,7 +207,6 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "in login success method");
                 progressDialog.dismiss();
                 _loginButton.setEnabled(true);
                 Log.d(TAG, "sending us from loginactivity to mainactivity");

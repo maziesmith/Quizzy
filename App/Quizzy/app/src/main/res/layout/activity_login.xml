@@ -20,10 +20,10 @@
             android:layout_marginTop="@dimen/edittext_vertical_padding">
 
             <EditText
-                android:id="@+id/input_email"
+                android:id="@+id/input_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email"
+                android:hint="@string/username"
                 android:inputType="textEmailAddress" />
         </android.support.design.widget.TextInputLayout>
 
