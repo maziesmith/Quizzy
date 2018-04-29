@@ -162,7 +162,7 @@ public class LoginActivity extends AppCompatActivity {
                     json.get("username").getAsString(), json.get("logged_in").getAsBoolean());
         } else {
             Log.d(TAG, "Code was not 200");
-            return new loginResponse(code, 0, "", false);
+            throw new Exception("LoginActivity:parseResponse failed with code " + code);
         }
     }
 

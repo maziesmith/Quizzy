@@ -67,9 +67,16 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\": \"" +
                 "New" + date +
-                "\",\n\t\"userid\": \"" +
+                "\",\n\t\"userid\": " +
                 userid +
-                "\",\n\t\"published\": " +
+                ",\n\t\"published\": " +
+                published +
+                "\n}");
+        Log.d(TAG, "addSurvey: " + "{\n\t\"quizname\": \"" +
+                "New" + date +
+                "\",\n\t\"userid\": " +
+                userid +
+                ",\n\t\"published\": " +
                 published +
                 "\n}");
         Request request = new Request.Builder()
@@ -110,9 +117,9 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                 Log.d(TAG, "Add Succeeded");
                 progressDialog.dismiss();
                 Intent intent = new Intent(activity, CreateSurveyActivity.class);
-                intent.putExtra("surveyid", a.userid);
+                intent.putExtra("surveyid", a.surveyid);
                 intent.putExtra("surveyname", a.quizname);
-                Log.d(TAG, "Extras for intent: " + a.userid + " " + a.quizname);
+                Log.d(TAG, "Extras for intent: " + a.surveyid + " " + a.quizname);
                 activity.startActivity(intent);
             }
         });
@@ -148,7 +155,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     json.get("userid").getAsInt(), json.get("id").getAsInt());
         }else {
             Log.d(TAG, "Code was not 200");
-            return new addSurveyResponse(code, "", 0, 0);
+            throw new Exception("SurveysFragment:parseAddResponse failed with code " + code);
         }
     }
 

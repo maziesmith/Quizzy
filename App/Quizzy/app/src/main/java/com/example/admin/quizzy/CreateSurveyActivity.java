@@ -1,6 +1,7 @@
 package com.example.admin.quizzy;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -55,7 +56,7 @@ public class CreateSurveyActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_survey);
 
-        _surveyId = 2;
+        _surveyId = getIntent().getIntExtra("surveyid", SurveyItem.DEFAULT_ID);
 
         FragmentManager fm = getSupportFragmentManager();
         _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_RETAINED_FRAGMENT);
@@ -77,6 +78,14 @@ public class CreateSurveyActivity extends AppCompatActivity
             public void onClick(View view) {
                 AddSurveyItemDialog dialog = new AddSurveyItemDialog();
                 dialog.show(getSupportFragmentManager(), "AddItem");
+            }
+        });
+
+        FloatingActionButton cancelButton = findViewById(R.id.surveyCancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 
@@ -106,12 +115,19 @@ public class CreateSurveyActivity extends AppCompatActivity
                         String jsonResponse = returnedBody.string();
                         Log.d(TAG, "onResponse: " + jsonResponse);
                         returnedBody.close();
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Toast.makeText(CreateSurveyActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
-                            }
-                        });
+                        switch (response.code()) {
+                            case 200:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(CreateSurveyActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            break;
+                            default:
+                                Toast.makeText(CreateSurveyActivity.this, "Save Failed", Toast.LENGTH_SHORT).show();
+                                throw new IOException("Saving survey failed with code " + response.code());
+                        }
                     }
                 });
             }  // onClick
@@ -181,7 +197,11 @@ public class CreateSurveyActivity extends AppCompatActivity
         TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
         jsonString += "\"id\": " + _surveyId + ",";
         jsonString += "\"quizname\": " + "\"" + titleView.getText().toString() + "\",";
-        jsonString += "\"userid\": " + "1" + ",";
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
+        int userid = prefs.getInt("userid", 2);
+        jsonString += "\"userid\": " + userid + ",";
         jsonString += "\"questions\": [";
 
         ArrayList<SurveyItem> items = _adapter.getData();
@@ -214,17 +234,23 @@ public class CreateSurveyActivity extends AppCompatActivity
                 String jsonResponse = body.string();
                 Log.d(TAG, "onResponse: " + jsonResponse);
                 body.close();
-                final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
-                final String title = parseSurveyTitle(jsonResponse);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        _dataFragment.setData(data);
-                        _adapter.addAll(data);
-                        TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
-                        titleView.setText(title);
-                    }
-                });
+                switch (response.code()) {
+                    case 200:
+                        final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                        final String title = parseSurveyTitle(jsonResponse);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _dataFragment.setData(data);
+                                _adapter.addAll(data);
+                                TextView titleView = (TextView) findViewById(R.id.surveyEditTitle);
+                                titleView.setText(title);
+                            }
+                        });
+                        break;
+                    default:
+                        throw new IOException("getSurvey failed with code " + response.code());
+                }
             }
         });
 
