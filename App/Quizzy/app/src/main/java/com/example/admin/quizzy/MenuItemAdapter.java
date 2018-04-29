@@ -124,9 +124,30 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
             }
         });
 
+
+        holder.takeButton.setOnLongClickListener(new View.OnLongClickListener(){
+            public boolean onLongClick(View v){
+                // get position we clicked
+                View parentRow = (View) v.getParent();
+                ListView listView = (ListView) parentRow.getParent();
+                final int position = listView.getPositionForView(parentRow);
+                // get item from position
+                MenuItem thisItem = getItem(position);
+                // edit this surveyid and surveyname
+                Intent intent = new Intent(context, TakeSurveyActivity.class);
+                intent.putExtra("surveyid", thisItem.getSurveyId());
+                context.startActivity(intent);
+                return true;
+            }
+        });
+
+
+        holder.takeButton.setVisibility(View.INVISIBLE);
+
         if(!buttonsOn){
             holder.editButton.setVisibility(View.INVISIBLE);
             holder.deleteButton.setVisibility(View.INVISIBLE);
+            holder.takeButton.setVisibility(View.VISIBLE);
         }
 
         
@@ -140,6 +161,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
         @BindView(R.id.menuItemTitle) TextView titleView;
         @BindView(R.id.menuEditButton) ImageButton editButton;
         @BindView(R.id.menuDeleteButton) ImageButton deleteButton;
+        @BindView(R.id.menuTakeButton) ImageButton takeButton;
 
         // constructor binds them immediately
         public ViewHolder(View view){

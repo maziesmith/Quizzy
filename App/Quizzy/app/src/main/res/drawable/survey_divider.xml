@@ -4,8 +4,9 @@
     android:insetRight="15dp" >
 
     <shape>
-        <solid android:color="#FFFFFF" />
-        <corners android:radius="2.0dip" />
+        <solid android:color="#11FFFFFF" />
+        <corners android:radius="1.5dip" />
+
     </shape>
 
 </inset>
