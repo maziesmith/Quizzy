@@ -38,6 +38,8 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
 
     private static final String TAG = "Quizzy_FragmentsDebug";
 
+    MenuLoader mLoader;
+
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
@@ -51,7 +53,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     @BindView(R.id.menuList)
     ListView _listView;
 
-    public void addSurvey(Boolean published){
+    public void addSurvey(Boolean published, final ArrayList<MenuItem> m){
         Log.d(TAG, "Adding Survey");
         final int userid = getUserId();
         String suffix = addUniqueID();
@@ -99,7 +101,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     public void onResponse(Call call, final Response response) {
                         try {
                             addSurveyResponse a = parseAddResponse(response);
-                            addSuccess(a, progressDialog);
+                            addSuccess(a, progressDialog, m);
                         } catch (Exception e){
                             Log.d(TAG, "Exception: " + e);
                             addFailed(progressDialog);
@@ -109,7 +111,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
 
     }
 
-    private void addSuccess(final addSurveyResponse a, final ProgressDialog progressDialog){
+    private void addSuccess(final addSurveyResponse a, final ProgressDialog progressDialog, final ArrayList<MenuItem> m){
         // context
         final FragmentActivity activity = getActivity();
 
@@ -118,6 +120,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
             public void run() {
                 Log.d(TAG, "Add Succeeded");
                 final Handler handler = new Handler();
+                populateFromUrl("mine", m);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -126,9 +129,10 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     intent.putExtra("surveyid", a.surveyid);
                     intent.putExtra("surveyname", a.quizname);
                     Log.d(TAG, "Extras for intent: " + a.surveyid + " " + a.quizname);
+                    mLoader.onAddSurveySuccess();
                     activity.startActivity(intent);
                     }
-                }, 500);
+                }, 1000);
             }
         });
     }
@@ -145,11 +149,11 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                    progressDialog.dismiss();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                    builder.setMessage("Failed to create survey.");
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
+                        progressDialog.dismiss();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                        builder.setMessage("Failed to create survey.");
+                        AlertDialog dialog = builder.create();
+                        dialog.show();
                     }
                 }, 500);
             }

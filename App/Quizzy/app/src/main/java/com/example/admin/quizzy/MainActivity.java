@@ -38,7 +38,7 @@ import okhttp3.Response;
  * Created by probu on 3/20/2018.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MenuLoader{
     private static final String TAG = "Quizzy_MainDebug";
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
@@ -56,6 +56,18 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.mainMenuRefreshButton)
     public void refreshUI(){
+        finish();
+        startActivity(getIntent());
+    }
+
+    @Override
+    public void onAddSurveySuccess() {
+        finish();
+        startActivity(getIntent());
+    }
+
+    @Override
+    public void onAddSurveyFailure() {
         finish();
         startActivity(getIntent());
     }

@@ -106,7 +106,7 @@ public class CreateSurveyActivity extends AppCompatActivity
                 client.newCall(request).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
-                        Log.d(TAG, "onFailure: " + e);
+                        Log.d(TAG, "onAddSurveyFailure: " + e);
                     }
 
                     @Override
@@ -225,7 +225,7 @@ public class CreateSurveyActivity extends AppCompatActivity
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                Log.d(TAG, "onFailure: " + e);
+                Log.d(TAG, "onAddSurveyFailure: " + e);
             }
 
             @Override

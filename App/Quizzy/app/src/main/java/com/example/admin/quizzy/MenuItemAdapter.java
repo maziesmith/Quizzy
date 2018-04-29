@@ -32,7 +32,7 @@ import okhttp3.Response;
  * Created by brianmedina on 3/27/18.
  */
 
-public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
+public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoader{
     private static final String TAG = "Quizzy_MenuADebug";
 
     private MenuItem currentItem;
@@ -42,6 +42,17 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
     public MenuItemAdapter(Context context, ArrayList<MenuItem> items) {
         super(context, 0, items);
         this.context = context;
+    }
+
+
+    @Override
+    public void onAddSurveySuccess() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onAddSurveyFailure() {
+        notifyDataSetChanged();
     }
 
     @Override

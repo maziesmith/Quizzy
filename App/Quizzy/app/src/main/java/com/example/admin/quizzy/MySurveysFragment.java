@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -28,13 +29,17 @@ public class MySurveysFragment  extends SurveysFragment {
     @BindView(R.id.loadingProgress)
     ProgressBar loadingProgress;
 
+    // Create a list of surveys
+    final ArrayList<MenuItem> menuItems = new ArrayList<>();
+
     @OnClick(R.id.addSurveyButton)
     public void run() {
-        addSurvey(false);
+        addSurvey(false, menuItems);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
+        mLoader = (MenuLoader) getActivity();
         // context
         final FragmentActivity activity = getActivity();
 
@@ -42,9 +47,6 @@ public class MySurveysFragment  extends SurveysFragment {
 
         // bind the view
         ButterKnife.bind(this, rootView);
-
-        // Create a list of surveys
-        final ArrayList<MenuItem> menuItems = new ArrayList<>();
 
         // get userid
         int userid = getUserId();

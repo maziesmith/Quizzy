@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -28,12 +29,15 @@ public class PublishedSurveysFragment extends SurveysFragment {
     @BindView(R.id.menuList)
     ListView _listView;
 
+    // Create a list of surveys
+    final ArrayList<MenuItem> menuItems = new ArrayList<>();
+
     @BindView(R.id.loadingProgress)
     ProgressBar loadingProgress;
 
     @OnClick(R.id.addSurveyButton)
     public void run() {
-        addSurvey(false);
+        addSurvey(false, menuItems);
     }
 
     @Override
