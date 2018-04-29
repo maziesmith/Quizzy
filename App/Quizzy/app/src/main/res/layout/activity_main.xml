@@ -21,14 +21,16 @@
             android:layout_gravity="center_vertical"
             android:maxLength="19"
             tools:text="Main Menu Username"
-            android:textSize="20sp"
-            android:layout_weight="3"/>
+            android:textSize="18sp"
+            android:textAllCaps="true"
+            android:layout_weight="2"/>
         <Button
             android:id="@+id/mainMenuRefreshButton"
             android:layout_width="0dp"
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:text="@string/refresh"
+            android:textSize="11sp"
             android:layout_weight="1"/>
 
         <Button
@@ -37,6 +39,7 @@
             android:layout_height="35dp"
             android:layout_gravity="center_vertical"
             android:text="@string/log_out"
+            android:textSize="11sp"
             android:layout_weight="1"/>
 
 
