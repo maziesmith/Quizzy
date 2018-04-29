@@ -22,6 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import okhttp3.Call;
@@ -53,7 +54,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     public void addSurvey(Boolean published){
         Log.d(TAG, "Adding Survey");
         final int userid = getUserId();
-        String date = getDateString();
+        String suffix = addUniqueID();
 
         // context
         final FragmentActivity activity = getActivity();
@@ -66,14 +67,14 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
 
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\": \"" +
-                "New" + date +
+                "New Survey " + suffix +
                 "\",\n\t\"userid\": " +
                 userid +
                 ",\n\t\"published\": " +
                 published +
                 "\n}");
         Log.d(TAG, "addSurvey: " + "{\n\t\"quizname\": \"" +
-                "New" + date +
+                "New" + suffix +
                 "\",\n\t\"userid\": " +
                 userid +
                 ",\n\t\"published\": " +
@@ -242,9 +243,8 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     }
 
     // the date string makes sure the survey names are unique when making them
-    String getDateString(){
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date now = new Date();
-        return sdfDate.format(now);
+    String addUniqueID(){
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
 }

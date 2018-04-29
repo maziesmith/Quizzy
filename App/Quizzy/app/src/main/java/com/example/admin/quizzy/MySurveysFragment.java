@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,9 @@ import butterknife.OnClick;
 public class MySurveysFragment  extends SurveysFragment {
     private static final String TAG = "Quizzy_FragmentsDebug";
     public MySurveysFragment() {}
+
+    @BindView(R.id.loadingProgress)
+    ProgressBar loadingProgress;
 
     @OnClick(R.id.addSurveyButton)
     public void run() {
@@ -48,12 +52,6 @@ public class MySurveysFragment  extends SurveysFragment {
         // Create the adapter
         final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
 
-        final ProgressDialog progress = new ProgressDialog(activity);
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
-        progress.setCancelable(false);
-        progress.show();
-
         // fill the menuItems list with stuff
         populateFromUrl("mine/" + userid, menuItems);
 
@@ -61,8 +59,8 @@ public class MySurveysFragment  extends SurveysFragment {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                loadingProgress.setVisibility(View.GONE);
                 // set adapter for listview
-                progress.dismiss();
                 _listView.setAdapter(adapter);
 
             }

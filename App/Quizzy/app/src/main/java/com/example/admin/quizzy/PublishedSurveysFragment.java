@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -26,6 +27,9 @@ public class PublishedSurveysFragment extends SurveysFragment {
     FloatingActionButton _addSurveyButton;
     @BindView(R.id.menuList)
     ListView _listView;
+
+    @BindView(R.id.loadingProgress)
+    ProgressBar loadingProgress;
 
     @OnClick(R.id.addSurveyButton)
     public void run() {
@@ -45,12 +49,6 @@ public class PublishedSurveysFragment extends SurveysFragment {
         // Create a list of surveys
         final ArrayList<MenuItem> menuItems = new ArrayList<>();
 
-        final ProgressDialog progress = new ProgressDialog(activity);
-        progress.setTitle("Loading");
-        progress.setMessage("Wait while loading...");
-        progress.setCancelable(false);
-        progress.show();
-
         // Create the adapter
         final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
 
@@ -62,7 +60,7 @@ public class PublishedSurveysFragment extends SurveysFragment {
             @Override
             public void run() {
                 // set adapter for listview
-                progress.dismiss();
+                loadingProgress.setVisibility(View.GONE);
                 _listView.setAdapter(adapter);
             }
         }, 2000);
