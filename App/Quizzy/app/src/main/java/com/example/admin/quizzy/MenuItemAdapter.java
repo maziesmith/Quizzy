@@ -38,10 +38,12 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
     private MenuItem currentItem;
     private Context context;
     private Activity activity;
+    private Boolean buttonsOn;
 
-    public MenuItemAdapter(Context context, ArrayList<MenuItem> items) {
+    public MenuItemAdapter(Context context, ArrayList<MenuItem> items, Boolean buttonsOn) {
         super(context, 0, items);
         this.context = context;
+        this.buttonsOn = buttonsOn;
     }
 
 
@@ -121,6 +123,11 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
                 return true;
             }
         });
+
+        if(!buttonsOn){
+            holder.editButton.setVisibility(View.INVISIBLE);
+            holder.deleteButton.setVisibility(View.INVISIBLE);
+        }
 
         
         return v;

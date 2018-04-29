@@ -46,8 +46,6 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     protected static Handler loadHandler;
 
     // bind views
-    @BindView(R.id.addSurveyButton)
-    FloatingActionButton _addSurveyButton;
     @BindView(R.id.menuList)
     ListView _listView;
 

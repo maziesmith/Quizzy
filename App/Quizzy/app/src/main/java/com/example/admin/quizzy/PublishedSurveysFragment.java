@@ -24,8 +24,6 @@ public class PublishedSurveysFragment extends SurveysFragment {
     private static final String TAG = "Quizzy_FragmentsDebug";
 
     // bind views
-    @BindView(R.id.addSurveyButton)
-    FloatingActionButton _addSurveyButton;
     @BindView(R.id.menuList)
     ListView _listView;
 
@@ -35,17 +33,12 @@ public class PublishedSurveysFragment extends SurveysFragment {
     @BindView(R.id.loadingProgress)
     ProgressBar loadingProgress;
 
-    @OnClick(R.id.addSurveyButton)
-    public void run() {
-        addSurvey(false, menuItems);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // context
         final FragmentActivity activity = getActivity();
 
-        View rootView = inflater.inflate(R.layout.fragment_surveys, parent, false);
+        View rootView = inflater.inflate(R.layout.fragment_published, parent, false);
 
         // bind the view
         ButterKnife.bind(this, rootView);
@@ -54,7 +47,7 @@ public class PublishedSurveysFragment extends SurveysFragment {
         final ArrayList<MenuItem> menuItems = new ArrayList<>();
 
         // Create the adapter
-        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
+        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems, false);
 
         // fill the menuItems list with stuff
         populateFromUrl("published", menuItems);

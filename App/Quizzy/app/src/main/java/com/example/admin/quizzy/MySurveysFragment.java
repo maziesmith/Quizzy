@@ -26,6 +26,9 @@ public class MySurveysFragment  extends SurveysFragment {
     private static final String TAG = "Quizzy_FragmentsDebug";
     public MySurveysFragment() {}
 
+    @BindView(R.id.addSurveyButton)
+    FloatingActionButton _addSurveyButton;
+
     @BindView(R.id.loadingProgress)
     ProgressBar loadingProgress;
 
@@ -52,7 +55,7 @@ public class MySurveysFragment  extends SurveysFragment {
         int userid = getUserId();
 
         // Create the adapter
-        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
+        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems, true);
 
         // fill the menuItems list with stuff
         populateFromUrl("mine/" + userid, menuItems);
