@@ -19,16 +19,30 @@
                 android:dividerHeight="1dp"
                 android:drawSelectorOnTop="true"/>
 
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/addSurveyButton"
-                android:layout_width="wrap_content"
+            <RelativeLayout
                 android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
+                android:layout_width="wrap_content"
                 android:layout_gravity="bottom"
-                android:padding="20sp"
-                app:srcCompat="@android:drawable/ic_menu_add" />
+                android:layout_margin="20sp">
+                <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/addSurveyButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    app:srcCompat="@android:drawable/ic_menu_add" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/add_a_survey"
+                    android:textColor="#FFF"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    android:layout_toRightOf="@id/addSurveyButton"
+                    android:layout_toEndOf="@id/addSurveyButton"
+                    android:layout_centerVertical="true"
+                    android:textSize="20sp"/>
+            </RelativeLayout>
 
         </FrameLayout>
 </android.support.constraint.ConstraintLayout>

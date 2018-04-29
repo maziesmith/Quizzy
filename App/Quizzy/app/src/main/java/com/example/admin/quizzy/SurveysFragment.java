@@ -59,7 +59,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
         final FragmentActivity activity = getActivity();
 
         // create ProgressDialog when logging in
-        final ProgressDialog progressDialog = new ProgressDialog(activity, R.style.AppTheme);
+        final ProgressDialog progressDialog = new ProgressDialog(activity);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Adding...");
         progressDialog.show();

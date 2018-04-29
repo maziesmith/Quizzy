@@ -68,8 +68,7 @@ public class MainActivity extends AppCompatActivity {
         _logoutButton.setEnabled(false);
 
         // create ProgressDialog when logging in
-        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this,
-                R.style.AppTheme);
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Logging out...");
         progressDialog.show();
