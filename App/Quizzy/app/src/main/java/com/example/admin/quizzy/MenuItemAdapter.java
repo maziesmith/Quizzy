@@ -46,12 +46,12 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
 
 
     @Override
-    public void onAddSurveySuccess() {
+    public void onSurveySuccess() {
         notifyDataSetChanged();
     }
 
     @Override
-    public void onAddSurveyFailure() {
+    public void onSurveyFailure() {
         notifyDataSetChanged();
     }
 

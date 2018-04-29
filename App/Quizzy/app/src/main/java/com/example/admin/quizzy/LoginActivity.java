@@ -119,7 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(final Call call, IOException e) {
                         // Error
-                        Log.d(TAG, "Call onAddSurveyFailure: " + e);
+                        Log.d(TAG, "Call onSurveyFailure: " + e);
                         loginFailed(progressDialog);
                     }
 

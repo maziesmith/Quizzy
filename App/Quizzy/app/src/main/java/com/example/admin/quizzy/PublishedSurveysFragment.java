@@ -59,15 +59,15 @@ public class PublishedSurveysFragment extends SurveysFragment {
         // fill the menuItems list with stuff
         populateFromUrl("published", menuItems);
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        loadHandler = new Handler(){
             @Override
-            public void run() {
-                // set adapter for listview
+            public void handleMessage(Message msg){
                 loadingProgress.setVisibility(View.GONE);
+                // set adapter for listview
                 _listView.setAdapter(adapter);
+
             }
-        }, 2000);
+        };
 
         return rootView;
     }

@@ -18,9 +18,7 @@ import com.squareup.moshi.Types;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -129,7 +127,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     intent.putExtra("surveyid", a.surveyid);
                     intent.putExtra("surveyname", a.quizname);
                     Log.d(TAG, "Extras for intent: " + a.surveyid + " " + a.quizname);
-                    mLoader.onAddSurveySuccess();
+                    mLoader.onSurveySuccess();
                     activity.startActivity(intent);
                     }
                 }, 1000);
@@ -222,6 +220,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                             String res = response.body().string();
                             Log.d(TAG, "Got a response: " + res);
                             populate(m, res);
+                            loadHandler.sendEmptyMessageDelayed(0, 500);
                         } catch(Exception e){
                             Log.d(TAG, "Exception: " + e);
                         }

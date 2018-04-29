@@ -61,13 +61,13 @@ public class MainActivity extends AppCompatActivity implements MenuLoader{
     }
 
     @Override
-    public void onAddSurveySuccess() {
+    public void onSurveySuccess() {
         finish();
         startActivity(getIntent());
     }
 
     @Override
-    public void onAddSurveyFailure() {
+    public void onSurveyFailure() {
         finish();
         startActivity(getIntent());
     }

@@ -57,6 +57,17 @@ public class MySurveysFragment  extends SurveysFragment {
         // fill the menuItems list with stuff
         populateFromUrl("mine/" + userid, menuItems);
 
+        loadHandler = new Handler(){
+            @Override
+            public void handleMessage(Message msg){
+                loadingProgress.setVisibility(View.GONE);
+                // set adapter for listview
+                _listView.setAdapter(adapter);
+
+            }
+        };
+
+
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
