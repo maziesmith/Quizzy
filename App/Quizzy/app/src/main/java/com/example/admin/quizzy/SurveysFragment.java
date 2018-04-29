@@ -91,6 +91,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                 .enqueue(new Callback() {
                     @Override
                     public void onFailure(final Call call, IOException e) {
+                        Log.d(TAG, "Exception: " + e);
                         addFailed(progressDialog);
                     }
                     @Override
@@ -115,12 +116,18 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
             @Override
             public void run() {
                 Log.d(TAG, "Add Succeeded");
-                progressDialog.dismiss();
-                Intent intent = new Intent(activity, CreateSurveyActivity.class);
-                intent.putExtra("surveyid", a.surveyid);
-                intent.putExtra("surveyname", a.quizname);
-                Log.d(TAG, "Extras for intent: " + a.surveyid + " " + a.quizname);
-                activity.startActivity(intent);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    progressDialog.dismiss();
+                    Intent intent = new Intent(activity, CreateSurveyActivity.class);
+                    intent.putExtra("surveyid", a.surveyid);
+                    intent.putExtra("surveyname", a.quizname);
+                    Log.d(TAG, "Extras for intent: " + a.surveyid + " " + a.quizname);
+                    activity.startActivity(intent);
+                    }
+                }, 500);
             }
         });
     }
@@ -133,11 +140,17 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
             @Override
             public void run() {
                 Log.d(TAG, "Add Failed");
-                progressDialog.dismiss();
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setMessage("Failed to create survey.");
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    progressDialog.dismiss();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setMessage("Failed to create survey.");
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    }
+                }, 500);
             }
         });
     }

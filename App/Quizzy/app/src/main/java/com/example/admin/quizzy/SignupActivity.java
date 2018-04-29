@@ -131,11 +131,17 @@ public class SignupActivity extends AppCompatActivity {
             @Override
             public void run() {
                 Log.d(TAG, "Signup failed");
-                progressDialog.dismiss();
-                // fail toast
-                Toast.makeText(getBaseContext(), "Sign up failed", Toast.LENGTH_LONG).show();
-                // enable button again
-                _signupButton.setEnabled(true);
+                    final Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                    progressDialog.dismiss();
+                    // fail toast
+                    Toast.makeText(getBaseContext(), "Sign up failed", Toast.LENGTH_LONG).show();
+                    // enable button again
+                    _signupButton.setEnabled(true);
+                    }
+                }, 1500);
             }
         });
     }

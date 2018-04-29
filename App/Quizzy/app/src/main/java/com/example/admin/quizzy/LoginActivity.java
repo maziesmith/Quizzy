@@ -2,6 +2,7 @@ package com.example.admin.quizzy;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -206,11 +207,17 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressDialog.dismiss();
-                _loginButton.setEnabled(true);
-                Log.d(TAG, "sending us from loginactivity to mainactivity");
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    progressDialog.dismiss();
+                    _loginButton.setEnabled(true);
+                    Log.d(TAG, "sending us from loginactivity to mainactivity");
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    startActivity(intent);
+                    }
+                }, 1500);
             }
         });
     }
@@ -219,10 +226,16 @@ public class LoginActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "in login fail method");
-                progressDialog.dismiss();
-                Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
-                _loginButton.setEnabled(true);
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    Log.d(TAG, "in login fail method");
+                    progressDialog.dismiss();
+                    Toast.makeText(getBaseContext(), "Login failed", Toast.LENGTH_LONG).show();
+                    _loginButton.setEnabled(true);
+                    }
+                }, 1500);
             }
         });
     }

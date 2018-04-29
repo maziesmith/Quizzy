@@ -1,8 +1,10 @@
 package com.example.admin.quizzy;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,20 +73,32 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
            }
         });
 
-        holder.deleteButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
+        holder.deleteButton.setOnLongClickListener(new View.OnLongClickListener(){
+            public boolean onLongClick(View v){
                 // gets the view's position
                 View parentRow = (View) v.getParent();
                 ListView listView = (ListView) parentRow.getParent();
                 final int position = listView.getPositionForView(parentRow);
                 // gets the surveyid from the item
-                int surveyid = getItem(position).getSurveyId();
-                // removes from the list
-                MenuItemAdapter.this.remove(getItem(position));
-                // removes from the database
-                delete(surveyid);
-                // updates the listview
-                notifyDataSetChanged();
+                final int surveyid = getItem(position).getSurveyId();
+                final ProgressDialog progressDialog = new ProgressDialog(context);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Deleting...");
+                progressDialog.show();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        progressDialog.dismiss();
+                        // removes from the list
+                        MenuItemAdapter.this.remove(getItem(position));
+                        // removes from the database
+                        delete(surveyid);
+                        // updates the listview
+                        notifyDataSetChanged();
+                    }
+                }, 750);
+                return true;
             }
         });
 
