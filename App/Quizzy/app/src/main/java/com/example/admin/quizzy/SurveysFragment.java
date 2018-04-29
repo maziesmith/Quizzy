@@ -3,21 +3,16 @@ package com.example.admin.quizzy;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.support.constraint.solver.widgets.Helper;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.squareup.moshi.JsonAdapter;
-import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.Types;
 
@@ -29,8 +24,6 @@ import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -47,6 +40,9 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
+
+    // handler for load main menu
+    protected static Handler loadHandler;
 
     // bind views
     @BindView(R.id.addSurveyButton)
@@ -93,7 +89,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                     @Override
                     public void onResponse(Call call, final Response response) {
                         try {
-                            addSurveyResponse a = parseResponse(response);
+                            addSurveyResponse a = parseAddResponse(response);
                             addSuccess(a, progressDialog);
                         } catch (Exception e){
                             Log.d(TAG, "Exception: " + e);
@@ -139,7 +135,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    addSurveyResponse parseResponse(Response response) throws Exception{
+    addSurveyResponse parseAddResponse(Response response) throws Exception{
         int code = response.code();
         Log.d(TAG, "Response is code " + code);
         JsonParser parser = new JsonParser();
@@ -231,5 +227,4 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
         Date now = new Date();
         return sdfDate.format(now);
     }
-
 }

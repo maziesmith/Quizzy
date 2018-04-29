@@ -1,11 +1,14 @@
 package com.example.admin.quizzy;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +21,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MySurveysFragment  extends SurveysFragment {
+    private static final String TAG = "Quizzy_FragmentsDebug";
     public MySurveysFragment() {}
 
     @OnClick(R.id.addSurveyButton)
@@ -41,22 +45,28 @@ public class MySurveysFragment  extends SurveysFragment {
         // get userid
         int userid = getUserId();
 
-        // fill the menuItems list with stuff
-        populateFromUrl("mine/" + userid, menuItems);
-
         // Create the adapter
         final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems);
+
+        final ProgressDialog progress = new ProgressDialog(activity);
+        progress.setTitle("Loading");
+        progress.setMessage("Wait while loading...");
+        progress.setCancelable(false);
+        progress.show();
+
+        // fill the menuItems list with stuff
+        populateFromUrl("mine/" + userid, menuItems);
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 // set adapter for listview
+                progress.dismiss();
                 _listView.setAdapter(adapter);
+
             }
-        }, 5000);
-
-
+        }, 2000);
 
         return rootView;
     }

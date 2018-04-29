@@ -6,31 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:baselineAligned="false"
-        android:weightSum="10">
-
-        <ListView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/menuList"
-            android:orientation="vertical"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:divider="@drawable/survey_divider"
-            android:dividerHeight="1dp"
-            android:drawSelectorOnTop="true"/>
+            android:layout_height="match_parent">
+
+            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/menuList"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:divider="@drawable/survey_divider"
+                android:dividerHeight="1dp"
+                android:drawSelectorOnTop="true"/>
 
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/addSurveyButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:focusable="true"
-            app:srcCompat="@android:drawable/ic_menu_add" />
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/addSurveyButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="bottom"
+                android:padding="20sp"
+                app:srcCompat="@android:drawable/ic_menu_add" />
 
-
-    </LinearLayout>
+        </FrameLayout>
 </android.support.constraint.ConstraintLayout>
