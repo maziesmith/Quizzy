@@ -3,6 +3,7 @@ package com.example.admin.quizzy;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Button;
@@ -12,8 +13,10 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import butterknife.ButterKnife;
@@ -69,6 +72,8 @@ public class SignupActivity extends AppCompatActivity {
         username = _usernameView.getText().toString();
         final String password = _passwordView.getText().toString();
 
+        Log.d(TAG, "Signing up user " + username);
+
         // make a signup request with these things
         signup_request(username, password, progressDialog);
     }
@@ -90,8 +95,11 @@ public class SignupActivity extends AppCompatActivity {
         SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("username", username);
+        Log.d(TAG, "Writing username: " + username);
         editor.putInt("userid", userid);
+        Log.d(TAG, "Writing userid: " + userid);
         editor.putBoolean("logged_in", logged_in);
+        Log.d(TAG, "Writing logged_in: " + logged_in);
         editor.apply();
     }
 
@@ -99,13 +107,20 @@ public class SignupActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                progressDialog.dismiss();
-                // enable button again
-                _signupButton.setEnabled(true);
-                saveUserInfo(username, userid, true);
-                // flag to tell if signup was successful
-                setResult(RESULT_OK, null);
-                finish();
+                Log.d(TAG, "Signup successful");
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    progressDialog.dismiss();
+                    // enable button again
+                    _signupButton.setEnabled(true);
+                    saveUserInfo(username, userid, true);
+                    // flag to tell if signup was successful
+                    setResult(RESULT_OK, null);
+                    finish();
+                    }
+                }, 2000);
 
             }
         });
@@ -115,6 +130,7 @@ public class SignupActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "Signup failed");
                 progressDialog.dismiss();
                 // fail toast
                 Toast.makeText(getBaseContext(), "Sign up failed", Toast.LENGTH_LONG).show();
@@ -129,6 +145,7 @@ public class SignupActivity extends AppCompatActivity {
     public boolean checkUsername(){
         String email = _usernameView.getText().toString();
         if (email.isEmpty()) {
+            Log.d(TAG, "Name invalid checkUsername()");
             _usernameView.setError("enter a valid username");
             return false;
         } else {
@@ -141,6 +158,7 @@ public class SignupActivity extends AppCompatActivity {
     public boolean checkPassword(){
         String password = _passwordView.getText().toString();
         if (password.isEmpty() || password.length() < 4 || password.length() > 30) {
+            Log.d(TAG, "Password invalid checkPassword()");
             _passwordView.setError("between 4 and 30 alphanumeric characters");
             return false;
         } else {
@@ -192,9 +210,10 @@ public class SignupActivity extends AppCompatActivity {
                             Log.d(TAG, "Trying to parse response");
                             signupResponse s = parseResponse(response);
                             if(s.logged_in) {
+                                Log.d(TAG, "Successfully parsed response");
                                 signupSuccess(progressDialog);
                             } else {
-                                signupFailed(progressDialog);
+                                throw(new IllegalStateException("Not logged_in"));
                             }
                         } catch(Exception e){
                             Log.d(TAG, "Exception: " + e);
@@ -209,16 +228,20 @@ public class SignupActivity extends AppCompatActivity {
         Log.d(TAG, "Response is code " + code);
         JsonParser parser = new JsonParser();
         if(code == 200) {
-            Log.d(TAG, "Code " + code + "means we parse JSON");
             // turn our result into a string
             String res = response.body().string();
             Log.d(TAG, "Response is " + res);
             JsonObject json = parser.parse(res).getAsJsonObject();
-            Log.d(TAG, "Parsed json");
+            Log.d(TAG, "Parsed json: ");
+            Log.d(TAG, "logged_in: " + json.get("logged_in").getAsBoolean());
+            Log.d(TAG, "username: "+ json.get("username").getAsString());
+            username = json.get("username").getAsString();
+            Log.d(TAG, "userid: " + json.get("id").getAsInt());
+            userid = json.get("id").getAsInt();
             return new signupResponse(code, json.get("logged_in").getAsBoolean(),
                     json.get("username").getAsString(), json.get("id").getAsInt());
         } else {
-            return new signupResponse(code, false, "", 0);
+            throw new JsonDataException("Malformed Json in Signup Response");
         }
     }
 
