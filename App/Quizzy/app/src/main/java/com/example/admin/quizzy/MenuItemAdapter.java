@@ -67,9 +67,16 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         // set onclick for edit button
         holder.editButton.setOnLongClickListener(new View.OnLongClickListener(){
            public boolean onLongClick(View v){
+               // get position we clicked
+               View parentRow = (View) v.getParent();
+               ListView listView = (ListView) parentRow.getParent();
+               final int position = listView.getPositionForView(parentRow);
+               // get item from position
+               MenuItem thisItem = getItem(position);
+               // edit this surveyid and surveyname
                Intent intent = new Intent(context, CreateSurveyActivity.class);
-               intent.putExtra("surveyid", currentItem.getSurveyId());
-               intent.putExtra("surveyname", currentItem.getSurveyName());
+               intent.putExtra("surveyid", thisItem.getSurveyId());
+               intent.putExtra("surveyname", thisItem.getSurveyName());
                context.startActivity(intent);
                return true;
            }
