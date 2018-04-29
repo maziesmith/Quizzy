@@ -13,10 +13,11 @@
         android:id="@+id/menuItemTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:maxLength="19"
+        android:maxLength="14"
+        android:ellipsize="end"
         tools:text="menu item title"
         android:textSize="20sp"
-        android:layout_weight="4"/>
+        android:layout_weight="12"/>
 
     <ImageButton
         android:contentDescription="@string/edit"
@@ -28,7 +29,9 @@
         android:paddingLeft="8dp"
         android:paddingEnd="8dp"
         android:paddingRight="8dp"
-        android:layout_weight=".25"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_weight="1"
         android:background="?android:selectableItemBackground"
         android:scaleType="fitCenter"/>
 
@@ -37,12 +40,13 @@
         android:id="@+id/menuDeleteButton"
         android:layout_width="16dp"
         android:layout_height="match_parent"
-        android:layout_weight=".25"
+        android:layout_weight="1"
         android:src="@drawable/delete_button"
         android:paddingStart="8dp"
         android:paddingLeft="8dp"
         android:paddingEnd="8dp"
-        android:paddingRight="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginStart="4dp"
         android:background="?android:selectableItemBackground"
         android:scaleType="fitCenter" />
 

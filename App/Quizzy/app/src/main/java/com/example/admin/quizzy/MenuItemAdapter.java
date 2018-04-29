@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -45,7 +46,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder holder;
+        final ViewHolder holder;
 
         // Check if an existing view is being reused, otherwise inflate the view
         View v = convertView;
@@ -64,12 +65,13 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
         holder.titleView.setText(currentItem.getSurveyName());
 
         // set onclick for edit button
-        holder.editButton.setOnClickListener(new View.OnClickListener(){
-           public void onClick(View v){
+        holder.editButton.setOnLongClickListener(new View.OnLongClickListener(){
+           public boolean onLongClick(View v){
                Intent intent = new Intent(context, CreateSurveyActivity.class);
                intent.putExtra("surveyid", currentItem.getSurveyId());
                intent.putExtra("surveyname", currentItem.getSurveyName());
                context.startActivity(intent);
+               return true;
            }
         });
 
@@ -102,6 +104,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem>{
             }
         });
 
+        
         return v;
     }
 
