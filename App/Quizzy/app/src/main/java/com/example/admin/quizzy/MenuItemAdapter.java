@@ -82,7 +82,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
            public boolean onLongClick(View v){
                // get position we clicked
                View parentRow = (View) v.getParent();
-               ListView listView = (ListView) parentRow.getParent();
+               ListView listView = (ListView) parentRow.getParent().getParent();
                final int position = listView.getPositionForView(parentRow);
                // get item from position
                MenuItem thisItem = getItem(position);
@@ -99,7 +99,7 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
             public boolean onLongClick(View v){
                 // gets the view's position
                 View parentRow = (View) v.getParent();
-                ListView listView = (ListView) parentRow.getParent();
+                ListView listView = (ListView) parentRow.getParent().getParent();
                 final int position = listView.getPositionForView(parentRow);
                 // gets the surveyid from the item
                 final int surveyid = getItem(position).getSurveyId();
