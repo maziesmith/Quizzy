@@ -14,7 +14,8 @@
 
         <activity
             android:name=".CreateSurveyActivity"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme"/>
 
         <activity
             android:name=".MainActivity"
@@ -35,7 +36,9 @@
 
         <activity
             android:name=".TakeSurveyActivity"
-            android:theme="@style/AppTheme"/>
+            android:windowSoftInputMode="adjustPan"
+            android:theme="@style/AppTheme">
+        </activity>
 
     </application>
 

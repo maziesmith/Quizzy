@@ -46,7 +46,7 @@ public class CreateSurveyActivity extends AppCompatActivity
     private SurveyItemAdapter _adapter;
     private RetainedFragment _dataFragment;
     private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
-    private static final String TAG = "DEBUG";
+    private static final String TAG = "Quizzy_CreateQuizDebug";
     private int _surveyId;
 
     private final OkHttpClient client = new OkHttpClient();
@@ -243,7 +243,7 @@ public class CreateSurveyActivity extends AppCompatActivity
                             public void run() {
                                 _dataFragment.setData(data);
                                 _adapter.addAll(data);
-                                TextView titleView = (TextView) findViewById(R.id.surveyEditTitle);
+                                EditText titleView = (EditText) findViewById(R.id.surveyEditTitle);
                                 titleView.setText(title);
                             }
                         });
