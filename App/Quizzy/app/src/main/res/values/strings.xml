@@ -24,4 +24,6 @@
     <string name="refresh">Refresh</string>
     <string name="add_a_survey">Add a survey</string>
     <string name="take_survey">take survey</string>
+    <string name="publish">publish</string>
+    <string name="analyze">analyze</string>
 </resources>

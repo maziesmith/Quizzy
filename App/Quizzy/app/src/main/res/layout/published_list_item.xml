@@ -3,68 +3,73 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:paddingTop="15dp"
     android:paddingBottom="15dp"
     android:paddingStart="20dp"
     android:paddingEnd="20dp">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/menuItemTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:ellipsize="end"
+        tools:text="menu item title"
+        android:textSize="20sp"
+        android:layout_marginBottom="5dp"/>
 
-        <TextView
-            android:id="@+id/menuItemTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:maxLength="14"
-            android:ellipsize="end"
-            tools:text="menu item title"
-            android:textSize="20sp"
-            android:layout_weight="12"/>
+    <LinearLayout
+        android:id="@+id/mySurveysButtonBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/menuItemTitle">
 
         <ImageButton
-            android:contentDescription="@string/edit"
-            android:id="@+id/menuEditButton"
-            android:layout_width="16dp"
+            android:contentDescription="@string/analyze"
+            android:id="@+id/menuAnalysisButton"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:src="@android:drawable/ic_menu_edit"
+            android:layout_weight="1"
+            android:src="@android:drawable/ic_menu_gallery"
+            android:background="?android:selectableItemBackground"
             android:paddingStart="8dp"
             android:paddingLeft="8dp"
             android:paddingEnd="8dp"
             android:paddingRight="8dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
+            android:scaleType="fitCenter"/>
+
+        <ImageButton
+            android:contentDescription="@string/take_survey"
+            android:id="@+id/menuTakeButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@android:drawable/ic_menu_send"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
+            android:paddingEnd="8dp"
             android:layout_weight="1"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
             android:background="?android:selectableItemBackground"
             android:scaleType="fitCenter"/>
 
         <ImageButton
             android:contentDescription="@string/delete"
             android:id="@+id/menuDeleteButton"
-            android:layout_width="16dp"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:src="@android:drawable/ic_menu_delete"
             android:paddingStart="8dp"
             android:paddingLeft="8dp"
             android:paddingEnd="8dp"
+            android:paddingRight="8dp"
             android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:background="?android:selectableItemBackground"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"/>
     </LinearLayout>
-
-    <ImageButton
-        android:contentDescription="@string/take_survey"
-        android:id="@+id/menuTakeButton"
-        android:layout_width="30dp"
-        android:layout_height="match_parent"
-        android:src="@android:drawable/ic_menu_agenda"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:background="?android:selectableItemBackground"
-        android:scaleType="fitCenter"/>
-
 </RelativeLayout>

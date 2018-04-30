@@ -9,6 +9,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,10 @@ public class MySurveysFragment  extends SurveysFragment {
     // Create a list of surveys
     final ArrayList<MenuItem> menuItems = new ArrayList<>();
 
+    // handler for load main menu
+    protected static Handler loadHandler;
+
+
     @OnClick(R.id.addSurveyButton)
     public void run() {
         addSurvey(false, menuItems);
@@ -54,22 +59,21 @@ public class MySurveysFragment  extends SurveysFragment {
         // get userid
         int userid = getUserId();
 
-        // Create the adapter
-        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems, true);
-
-        // fill the menuItems list with stuff
-        populateFromUrl("mine/" + userid, menuItems);
-
         loadHandler = new Handler(){
             @Override
             public void handleMessage(Message msg){
-                loadingProgress.setVisibility(View.GONE);
                 // set adapter for listview
-                _listView.setAdapter(adapter);
-
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(MySurveysFragment.this).attach(MySurveysFragment.this).commit();
+                loadingProgress.setVisibility(View.GONE);
             }
         };
 
+        // Create the adapter
+        final MenuItemAdapter adapter = new MenuItemAdapter(activity, menuItems, false, loadHandler);
+
+        // fill the menuItems list with stuff
+        populateFromUrl("mine/" + userid, menuItems);
 
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -80,7 +84,7 @@ public class MySurveysFragment  extends SurveysFragment {
                 _listView.setAdapter(adapter);
 
             }
-        }, 2000);
+        }, 3000);
 
         return rootView;
     }

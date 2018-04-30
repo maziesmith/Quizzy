@@ -38,12 +38,12 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
 
     MenuLoader mLoader;
 
+    // handler for load main menu
+    protected static Handler loadHandler;
+
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
-
-    // handler for load main menu
-    protected static Handler loadHandler;
 
     // bind views
     @BindView(R.id.menuList)
@@ -116,7 +116,6 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
             public void run() {
                 Log.d(TAG, "Add Succeeded");
                 final Handler handler = new Handler();
-                populateFromUrl("mine", m);
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -218,7 +217,7 @@ public class SurveysFragment extends android.support.v4.app.Fragment {
                             String res = response.body().string();
                             Log.d(TAG, "Got a response: " + res);
                             populate(m, res);
-                            loadHandler.sendEmptyMessageDelayed(0, 500);
+                            loadHandler.sendEmptyMessage(0);
                         } catch(Exception e){
                             Log.d(TAG, "Exception: " + e);
                         }
