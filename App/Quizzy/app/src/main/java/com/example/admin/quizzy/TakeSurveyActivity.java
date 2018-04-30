@@ -1,8 +1,10 @@
 package com.example.admin.quizzy;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ public class TakeSurveyActivity extends AppCompatActivity{
     private static final String TAG_TAKESURVEY_FRAGMENT = "Retained_TakeSurvey";
     private static final String TAG = "Quizzy_TakeQuizDebug";
     private int _surveyId;
+    private int _ownerId;
 
     private final OkHttpClient client = new OkHttpClient();
 
@@ -50,7 +53,7 @@ public class TakeSurveyActivity extends AppCompatActivity{
         if(_dataFragment == null) {
             _dataFragment = new RetainedFragment();
             fm.beginTransaction().add(_dataFragment, TAG_TAKESURVEY_FRAGMENT).commit();
-            _dataFragment.setData(new ArrayList<SurveyItem>());
+            _dataFragment.setData(new ArrayList<TakeSurveyItem>());
             getSurvey(_surveyId);
         }
 
@@ -58,7 +61,21 @@ public class TakeSurveyActivity extends AppCompatActivity{
         ListView surveyList = findViewById(R.id.surveyItemList);
         surveyList.setAdapter(_adapter);
 
+        FloatingActionButton returnButton = findViewById(R.id.returnButton);
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
+        FloatingActionButton submitButton = findViewById(R.id.submitButton);
+        submitButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "onClick: " + dataToJson());
+            }
+        });
     }
 
     @Override
@@ -92,6 +109,25 @@ public class TakeSurveyActivity extends AppCompatActivity{
         return super.dispatchTouchEvent( event );
     }
 
+    private String dataToJson() {
+        String jsonString = "{";
+
+        TextView titleView = (TextView)findViewById(R.id.surveyTitleView);
+        jsonString += "\"id\": " + _surveyId + ",";
+        jsonString += "\"quizname\": " + "\"" + titleView.getText().toString() + "\",";
+
+        jsonString += "\"userid\": " + _ownerId + ",";
+        jsonString += "\"questions\": ";
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
+        int userid = prefs.getInt("userid", SurveyItem.DEFAULT_ID);
+        jsonString += _adapter.dataToJson(userid, _surveyId);
+
+        jsonString += "}";
+        return jsonString;
+    }
+
     private void getSurvey(int id) {
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/quiz/" + id)
@@ -111,15 +147,22 @@ public class TakeSurveyActivity extends AppCompatActivity{
                 body.close();
                 switch (response.code()) {
                     case 200:
-                        final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                        ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                        int defaultButtonId = getResources().getIdentifier("response1", "id", getPackageName());
+                        final ArrayList<TakeSurveyItem> dataWithDefaultSelection = new ArrayList<TakeSurveyItem>();
+                        for (int i = 0; i < data.size(); i++) {
+                            dataWithDefaultSelection.add(new TakeSurveyItem(data.get(i), defaultButtonId));
+                        }
                         final String title = parseSurveyTitle(jsonResponse);
+                        final int owner = parseOwnerId(jsonResponse);
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                _dataFragment.setData(data);
-                                _adapter.addAll(data);
+                                _dataFragment.setData(dataWithDefaultSelection);
+                                _adapter.addAll(dataWithDefaultSelection);
                                 TextView titleView = (TextView) findViewById(R.id.surveyTitleView);
                                 titleView.setText(title);
+                                _ownerId = owner;
                             }
                         });
                         break;
@@ -143,6 +186,20 @@ public class TakeSurveyActivity extends AppCompatActivity{
         }
 
         return title;
+    }
+
+    private int parseOwnerId(String json) {
+        int id = SurveyItem.DEFAULT_ID;
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject fullJson = parser.parse(json).getAsJsonObject();
+            id = fullJson.getAsJsonPrimitive("userid").getAsInt();
+
+        } catch (Exception e) {
+            Log.d(TAG, "parseOwnerId: " + e);
+        }
+
+        return id;
     }
 
     private ArrayList<SurveyItem> parseSurvey(String json) {
@@ -189,7 +246,7 @@ public class TakeSurveyActivity extends AppCompatActivity{
      * of the activity.
      */
     public static class RetainedFragment extends Fragment {
-        private ArrayList<SurveyItem> data;
+        private ArrayList<TakeSurveyItem> data;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -197,11 +254,11 @@ public class TakeSurveyActivity extends AppCompatActivity{
             setRetainInstance(true);
         }
 
-        public void setData(ArrayList<SurveyItem> data) {
+        public void setData(ArrayList<TakeSurveyItem> data) {
             this.data = data;
         }
 
-        public ArrayList<SurveyItem> getData() {
+        public ArrayList<TakeSurveyItem> getData() {
             return data;
         }
     }

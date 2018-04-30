@@ -19,6 +19,7 @@
         android:id="@+id/responses_section"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:inputType="text|textCapSentences"
         android:hint="@string/open_response_hint"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

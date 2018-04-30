@@ -125,7 +125,12 @@ public class CreateSurveyActivity extends AppCompatActivity
                             });
                             break;
                             default:
-                                Toast.makeText(CreateSurveyActivity.this, "Save Failed", Toast.LENGTH_SHORT).show();
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(CreateSurveyActivity.this, "Save Failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                                 throw new IOException("Saving survey failed with code " + response.code());
                         }
                     }
@@ -200,7 +205,7 @@ public class CreateSurveyActivity extends AppCompatActivity
 
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(
                 "quizzy.pref", Context.MODE_PRIVATE);
-        int userid = prefs.getInt("userid", 2);
+        int userid = prefs.getInt("userid", SurveyItem.DEFAULT_ID);
         jsonString += "\"userid\": " + userid + ",";
         jsonString += "\"questions\": [";
 

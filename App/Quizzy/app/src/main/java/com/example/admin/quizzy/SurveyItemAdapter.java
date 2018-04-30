@@ -95,7 +95,6 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
                     for(int i = 0; i < type; i++) {
                         String viewIdName = "response" + (i + 1);
                         int id = getContext().getResources().getIdentifier(viewIdName, "id", getContext().getPackageName());
-                        Log.i("ID", "getView: id=" + id);
                         holder.responseList.add((EditText)convertView.findViewById(id));
                         holder.responseList.get(i).setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
@@ -139,7 +138,6 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
                     for(int i = 0; i < type; i++) {
                         String viewIdName = "response" + (i + 1);
                         int id = getContext().getResources().getIdentifier(viewIdName, "id", getContext().getPackageName());
-                        Log.i("ID", "getView: id=" + id);
                         holder.responseList.add((EditText)convertView.findViewById(id));
                         holder.responseList.get(i).setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
@@ -215,5 +213,3 @@ public class SurveyItemAdapter extends ArrayAdapter<SurveyItem> {
         }
     }
 }
-
-

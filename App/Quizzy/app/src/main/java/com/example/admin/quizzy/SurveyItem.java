@@ -113,4 +113,30 @@ public class SurveyItem {
         jsonString += "}";
         return jsonString;
     }
+
+    // Only meant to be called in TakeSurveyActivity, where all questions and
+    //   responses have valid IDs
+    public String toJsonForSubmit(int responseIndex, int userId, int quizId) {
+
+        String responseText = _responses.get(responseIndex);
+        int responseId = _responseIds[responseIndex];
+
+        String jsonString = "{";
+
+        jsonString += "\"id\": " + _questionId + ",";
+        jsonString += "\"text\": " + "\"" + _question + "\",";
+        jsonString += "\"quizid\": " + quizId + ",";
+        jsonString += "\"answers\": [";
+
+        jsonString += "{";
+        jsonString += "\"id\": " + responseId + ",";
+        jsonString += "\"text\": " + "\"" + responseText + "\",";
+        jsonString += "\"user\": " + userId + ",";
+        jsonString += "\"questiontextid\": " + _questionId;
+        jsonString += "}";
+
+        jsonString += "]";
+        jsonString += "}";
+        return jsonString;
+    }
 }
