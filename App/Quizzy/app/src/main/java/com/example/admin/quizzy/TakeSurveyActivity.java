@@ -80,7 +80,7 @@ public class TakeSurveyActivity extends AppCompatActivity{
 
                 RequestBody body = RequestBody.create(MediaType.parse("application/json"), dataToJson());
                 Request request = new Request.Builder()
-                        .url("http://quizzybackend.herokuapp.com/quiz/all")
+                        .url("http://quizzybackend.herokuapp.com/quiz/all/guest")
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .addHeader("Cache-Control", "no-cache")
@@ -159,12 +159,13 @@ public class TakeSurveyActivity extends AppCompatActivity{
         jsonString += "\"id\": " + _surveyId + ",";
         jsonString += "\"quizname\": " + "\"" + titleView.getText().toString() + "\",";
 
-        jsonString += "\"userid\": " + _ownerId + ",";
-        jsonString += "\"questions\": ";
-
         SharedPreferences prefs = getApplicationContext().getSharedPreferences(
                 "quizzy.pref", Context.MODE_PRIVATE);
         int userid = prefs.getInt("userid", SurveyItem.DEFAULT_ID);
+
+        jsonString += "\"userid\": " + userid + ",";
+        jsonString += "\"questions\": ";
+
         jsonString += _adapter.dataToJson(userid, _surveyId);
 
         jsonString += "}";

@@ -98,7 +98,7 @@ public class CreateSurveyActivity extends AppCompatActivity
 
                 RequestBody body = RequestBody.create(MediaType.parse("application/json"), dataToJson());
                 Request request = new Request.Builder()
-                        .url("http://quizzybackend.herokuapp.com/quiz/all")
+                        .url("http://quizzybackend.herokuapp.com/quiz/all/owner")
                         .post(body)
                         .addHeader("Content-Type", "application/json")
                         .addHeader("Cache-Control", "no-cache")

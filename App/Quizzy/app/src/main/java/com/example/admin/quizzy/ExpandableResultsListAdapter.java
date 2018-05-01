@@ -235,7 +235,9 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
             // if question was open response, save all individual responses
             if(numResp < 2) {
                 for (int i = 0; i < responses.size(); i++) {
-                    responseItems.add(new ResponseItem(responses.get(i), 0));
+                    if( !responses.get(i).isEmpty() ) {
+                        responseItems.add(new ResponseItem(responses.get(i), 0));
+                    }
                 }
                 child.put(header.get(groupPosition), responseItems);
             // else count the number of occurrences of each possible response
@@ -243,8 +245,8 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
                 for(int i = 0; i < numResp; i++) {
                     String text = child.get(header.get(groupPosition)).get(i).responseText;
                     int occurrences = Collections.frequency(responses, text);
-                    Log.d(TAG, "parseResponses: NUMBER OF \"" + text + "\" = " + occurrences);
-                    responseItems.add(new ResponseItem(text, occurrences));
+                    Log.d(TAG, "parseResponses: NUMBER OF \"" + text + "\" = " + (occurrences - 1));
+                    responseItems.add(new ResponseItem(text, occurrences - 1));
                 }
                 child.put(header.get(groupPosition), responseItems);
             }

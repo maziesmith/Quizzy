@@ -131,7 +131,7 @@ public class SurveyItem {
         jsonString += "\"answers\": [";
 
         jsonString += "{";
-        jsonString += "\"id\": " + responseId + ",";
+        //jsonString += "\"id\": " + responseId + ",";
         jsonString += "\"text\": " + "\"" + responseText + "\",";
         jsonString += "\"user\": " + userId + ",";
         jsonString += "\"questiontextid\": " + _questionId;
