@@ -8,10 +8,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     private static final String TAG = "Quizzy_ExpListDebug";
@@ -20,6 +34,8 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     private List<String> header; // header titles
     // Child data in format of header title, child title
     private HashMap<String, List<String>> child;
+
+    private final OkHttpClient client = new OkHttpClient();
 
     public ExpandableResultsListAdapter(Context context, List<SurveyItem> items) {
         this._context = context;
@@ -64,8 +80,14 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
         }
 
         TextView child_text = (TextView) convertView.findViewById(R.id.child);
+        TextView child_count = (TextView) convertView.findViewById(R.id.count);
 
         child_text.setText(childText);
+        child_count.setText("0");
+
+        if (surveyItems.get(groupPosition).getNumResponses() < 2) {
+            child_count.setVisibility(View.INVISIBLE);
+        }
         return convertView;
     }
 
@@ -142,16 +164,70 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public void onGroupExpanded(int groupPosition) {
+    public void onGroupExpanded(final int groupPosition) {
         Log.d(TAG, "onGroupExpanded: calling function");
+
         // Make call to get all responses for the question at groupPosition
+        final SurveyItem groupItem = surveyItems.get(groupPosition);
+        int questionId = groupItem.getQuestionId();
+        Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/quiz/questionanswer/" + questionId)
+                .get()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onSurveyFailure: " + e);
+            }
 
-        SurveyItem groupItem = surveyItems.get(groupPosition);
-        if(groupItem.getNumResponses() < 2) {
-            int questionId = groupItem.getQuestionId();
-        } else {
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                String jsonResponse = body.string();
+                Log.d(TAG, "onResponse: " + jsonResponse);
+                body.close();
+                switch (response.code()) {
+                    case 200:
+                        parseResponses(groupPosition, jsonResponse);
+                        break;
+                    default:
+                        throw new IOException("getResponses failed with code " + response.code());
+                }
+            }
+        });
 
+    }
+
+    private void parseResponses(int groupPosition, String responsesArray) {
+
+        List<String> responses = new ArrayList<String>();
+        JsonParser parser = new JsonParser();
+        try {
+            JsonArray fullJson = parser.parse(responsesArray).getAsJsonArray();
+            for(int i = 0; i < fullJson.size(); i++) {
+                JsonObject responseObj = fullJson.get(i).getAsJsonObject();
+                String responseText = responseObj.getAsJsonPrimitive("text").getAsString();
+                responses.add(responseText);
+            }
+
+            int numResp = surveyItems.get(groupPosition).getNumResponses();
+            // if question was open response, save all individual responses
+            if(numResp < 2) {
+                child.put(header.get(groupPosition), responses);
+            // else count the number of occurrences of each possible response
+            } else {
+                for(int i = 0; i < numResp; i++) {
+                    int occurrences = Collections.frequency(responses, child.get(header.get(groupPosition)).get(i));
+                    Log.d(TAG, "parseResponses: NUMBER OF \"" + child.get(header.get(groupPosition)).get(i) + "\" = " + occurrences);
+                }
+
+            }
+
+            //notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.d(TAG, "parseSurveyTitle: " + e);
         }
+
     }
 
 }

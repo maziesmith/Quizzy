@@ -1,15 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:weightSum="5"
     android:layout_margin="5dp">
 
     <TextView
         android:id="@+id/child"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_weight="4"
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
-        android:textAppearance="?android:textAppearanceSmall"/>
+        android:hint="response"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_gravity="center_vertical"/>
+    <TextView
+        android:id="@+id/count"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:hint="count"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:layout_gravity="center_vertical"/>
 
 </LinearLayout>
