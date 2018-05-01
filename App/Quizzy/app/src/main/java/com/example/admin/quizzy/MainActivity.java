@@ -57,7 +57,15 @@ public class MainActivity extends AppCompatActivity implements MenuLoader{
     @OnClick(R.id.mainMenuRefreshButton)
     public void refreshUI(){
         finish();
+        overridePendingTransition(0, 0);
         startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        refreshUI();
     }
 
     @Override

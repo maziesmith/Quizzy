@@ -14,12 +14,14 @@
         android:id="@+id/surveyEditTitle"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginVertical="5dp"
-        android:inputType="text|textCapSentences"
-        android:hint="Survey Title"
         android:layout_gravity="center_horizontal"
-        android:textAppearance="?android:textAppearanceMedium"/>
+        android:layout_marginVertical="5dp"
+        android:layout_weight="1"
+        android:hint="Survey Title"
+        android:gravity="center_vertical"
+        android:inputType="text|textCapSentences"
+        android:textAppearance="?android:textAppearanceMedium"
+        android:textColor="@color/colorSurveyTitle"/>
 
     <ListView
         android:id="@+id/surveyEditList"
@@ -27,7 +29,9 @@
         android:layout_height="0dp"
         android:layout_weight="8"
         android:descendantFocusability="afterDescendants"
-        android:focusable="false">
+        android:focusable="false"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/colorEditorBackground">
 
     </ListView>
 
@@ -69,7 +73,7 @@
             android:layout_marginHorizontal="10dp"
             android:clickable="true"
             android:focusable="true"
-            app:srcCompat="@android:drawable/ic_menu_close_clear_cancel" />
+            app:srcCompat="@android:drawable/ic_menu_revert" />
 
     </RelativeLayout>
 

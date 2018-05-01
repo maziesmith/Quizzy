@@ -159,14 +159,14 @@ public class MenuItemAdapter extends ArrayAdapter<MenuItem> implements MenuLoade
                 public boolean onLongClick(View v){
                     // get position we clicked
                     View parentRow = (View) v.getParent();
-                    ListView listView = (ListView) parentRow.getParent();
+                    ListView listView = (ListView) parentRow.getParent().getParent();
                     final int position = listView.getPositionForView(parentRow);
                     // get item from position
                     MenuItem thisItem = getItem(position);
-                    // TODO: go to analysis page
-                    //Intent intent = new Intent(context, AnalysisActivity.class);
-                    //intent.putExtra("surveyid", thisItem.getSurveyId());
-                    //context.startActivity(intent);
+                    // go to analysis page
+                    Intent intent = new Intent(context, ViewResultsActivity.class);
+                    intent.putExtra("surveyid", thisItem.getSurveyId());
+                    context.startActivity(intent);
                     return true;
                 }
             });

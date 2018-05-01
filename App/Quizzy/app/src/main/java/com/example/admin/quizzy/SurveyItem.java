@@ -61,6 +61,8 @@ public class SurveyItem {
         }
     }
 
+    public int getQuestionId() { return _questionId; }
+
     public int getNumResponses() { return  _numResponses; }
 
     public String getQuestion() {
