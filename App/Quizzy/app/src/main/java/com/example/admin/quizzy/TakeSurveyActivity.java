@@ -15,6 +15,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -25,8 +26,10 @@ import java.util.ArrayList;
 
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
@@ -46,7 +49,7 @@ public class TakeSurveyActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_survey);
 
-        _surveyId = 1;
+        _surveyId = getIntent().getIntExtra("surveyid", SurveyItem.DEFAULT_ID);
 
         FragmentManager fm = getSupportFragmentManager();
         _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_TAKESURVEY_FRAGMENT);
@@ -74,6 +77,46 @@ public class TakeSurveyActivity extends AppCompatActivity{
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "onClick: " + dataToJson());
+
+                RequestBody body = RequestBody.create(MediaType.parse("application/json"), dataToJson());
+                Request request = new Request.Builder()
+                        .url("http://quizzybackend.herokuapp.com/quiz/all")
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Cache-Control", "no-cache")
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG, "onSurveyFailure: " + e);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        ResponseBody returnedBody = response.body();
+                        String jsonResponse = returnedBody.string();
+                        Log.d(TAG, "onResponse: " + jsonResponse);
+                        returnedBody.close();
+                        switch (response.code()) {
+                            case 200:
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(TakeSurveyActivity.this, "Responses submitted!", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                break;
+                            default:
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(TakeSurveyActivity.this, "Submission failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                throw new IOException("Submitting survey failed with code " + response.code());
+                        }
+                    }
+                });
             }
         });
     }
