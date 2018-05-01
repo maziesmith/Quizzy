@@ -11,10 +11,10 @@
     <string name="Login">Log In</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="signup_reminder_string">Create an account</string>
+    <string name="signup_reminder_string">No account? <u>Create one</u>.</string>
     <string name="name">Name</string>
     <string name="create_account">Create Account</string>
-    <string name="already_a_member_log_in">Already a member? Log in</string>
+    <string name="already_a_member_log_in">Already a member? <u>Log in</u>.</string>
     <string name="edit">edit</string>
     <string name="delete">delete</string>
     <string name="log_out">Log Out</string>

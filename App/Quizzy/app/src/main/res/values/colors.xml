@@ -7,4 +7,5 @@
     <color name="colorEditorBackground">#1c313a</color>
     <color name="colorDarkBackground">#FF303030</color>
     <color name="colorSurveyTitle">#80cbc4</color>
+    <color name="colorYellowAccent">#ffe400</color>
 </resources>

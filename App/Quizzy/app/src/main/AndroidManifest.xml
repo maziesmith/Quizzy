@@ -23,6 +23,7 @@
 
         <activity
             android:name=".LoginActivity"
+            android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,6 +45,10 @@
             android:name=".ViewResultsActivity"
             android:theme="@style/AppTheme">
         </activity>
+
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
     </application>
 
