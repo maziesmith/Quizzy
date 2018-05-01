@@ -1,0 +1,260 @@
+Using quizid 32 as an example.
+
+******************************************
+This was the original quiz:
+******************************************
+
+{
+  "id": 32,
+  "quizname": "survey about colors",
+  "userid": 10,
+  "published": true,
+  "questions": [
+    {
+      "id": 20,
+      "text": "What is your favorite color?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 45,
+          "text": "",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 20
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "text": "What color do you like best on a car?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 46,
+          "text": "Red",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        },
+        {
+          "id": 47,
+          "text": "Blue",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        },
+        {
+          "id": 48,
+          "text": "Green",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        },
+        {
+          "id": 49,
+          "text": "White",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        },
+        {
+          "id": 50,
+          "text": "Black",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "text": "Do you like the color yellow?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 51,
+          "text": "Yes",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 22
+        },
+        {
+          "id": 52,
+          "text": "No",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 22
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "text": "What color means stop?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 80,
+          "text": "Red",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 37
+        },
+        {
+          "id": 81,
+          "text": "Green",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 37
+        },
+        {
+          "id": 82,
+          "text": "Yellow",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 37
+        }
+      ]
+    }
+  ]
+}
+
+
+*******************************************************
+This is what I sent to /quiz/all to submit answers
+*******************************************************
+
+{
+  "id": 32,
+  "quizname": "survey about colors",
+  "userid": 10,
+  "questions": [
+    {
+      "id": 20,
+      "text": "What is your favorite color?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 45,
+          "text": "None of your business.",
+          "user": 24,
+          "questiontextid": 20
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "text": "What color do you like best on a car?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 47,
+          "text": "Blue",
+          "user": 24,
+          "questiontextid": 21
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "text": "Do you like the color yellow?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 52,
+          "text": "No",
+          "user": 24,
+          "questiontextid": 22
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "text": "What color means stop?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 82,
+          "text": "Yellow",
+          "user": 24,
+          "questiontextid": 37
+        }
+      ]
+    }
+  ]
+}
+
+*******************************************************
+Then the quiz changed to this
+*******************************************************
+
+{
+  "id": 32,
+  "quizname": "survey about colors",
+  "userid": 10,
+  "published": true,
+  "questions": [
+    {
+      "id": 20,
+      "text": "What is your favorite color?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 45,
+          "text": "None of your business.",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 20
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "text": "What color do you like best on a car?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 46,
+          "text": "Blue",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 21
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "text": "Do you like the color yellow?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 51,
+          "text": "No",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 22
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "text": "What color means stop?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 80,
+          "text": "Yellow",
+          "isRight": false,
+          "user": 10,
+          "questiontextid": 37
+        }
+      ]
+    }
+  ]
+}
+
+
+*******************************************************
+I think the returned quiz should not change from what it originally was, the route should just create the answers given in the request
+
+One way you can distinguish this type of request from one where the owner is updating the quiz is by comparing the
+userid of the quiz with the userid of the answers. But you might think of a better way.
