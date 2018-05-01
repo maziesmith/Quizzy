@@ -1,5 +1,6 @@
 package com.example.admin.quizzy;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
@@ -27,18 +28,22 @@ import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
+/**
+ * Based on the tutorial at http://www.androhub.com/android-expandablelistview/
+ */
+
 public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     private static final String TAG = "Quizzy_ExpListDebug";
-    private Context _context;
+    private Activity _context;
     private List<SurveyItem> surveyItems;
     private List<String> header; // header titles
     // Child data in format of header title, child title
-    private HashMap<String, List<String>> child;
+    private HashMap<String, List<ResponseItem>> child;
 
     private final OkHttpClient client = new OkHttpClient();
 
     public ExpandableResultsListAdapter(Context context, List<SurveyItem> items) {
-        this._context = context;
+        this._context = (Activity)context;
         surveyItems = items;
 
         this.header = new ArrayList<String>();
@@ -46,9 +51,14 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
             header.add(surveyItems.get(i).getQuestion());
         }
 
-        this.child = new HashMap<String, List<String>>();
+        this.child = new HashMap<String, List<ResponseItem>>();
         for(int i = 0; i < header.size(); i++) {
-            child.put(header.get(i), surveyItems.get(i).getResponses());
+            List<ResponseItem> responses = new ArrayList<ResponseItem>();
+            ArrayList<String> tempResponses = surveyItems.get(i).getResponses();
+            for (int j = 0; j < tempResponses.size(); j++) {
+                responses.add(new ResponseItem(tempResponses.get(j), 0));
+            }
+            child.put(header.get(i), responses);
         }
     }
 
@@ -68,9 +78,8 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition,
                              boolean isLastChild, View convertView, ViewGroup parent) {
-        Log.d(TAG, "getChildView: calling function");
         // Getting child text
-        final String childText = (String) getChild(groupPosition, childPosition);
+        final ResponseItem childItem = (ResponseItem)getChild(groupPosition, childPosition);
 
         // Inflating child layout and setting textview
         if (convertView == null) {
@@ -82,11 +91,16 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
         TextView child_text = (TextView) convertView.findViewById(R.id.child);
         TextView child_count = (TextView) convertView.findViewById(R.id.count);
 
+        final String childText = childItem.responseText;
+        final int childCount = childItem.count;
+
         child_text.setText(childText);
-        child_count.setText("0");
+        child_count.setText(String.valueOf(childCount));
 
         if (surveyItems.get(groupPosition).getNumResponses() < 2) {
             child_count.setVisibility(View.INVISIBLE);
+        } else {
+            child_count.setVisibility(View.VISIBLE);
         }
         return convertView;
     }
@@ -120,7 +134,6 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getGroupView(int groupPosition, boolean isExpanded,
                              View convertView, ViewGroup parent) {
-        Log.d(TAG, "getGroupView: Calling function");
         // Getting header title
         String headerTitle = (String) getGroup(groupPosition);
 
@@ -183,12 +196,18 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 ResponseBody body = response.body();
-                String jsonResponse = body.string();
+                final String jsonResponse = body.string();
                 Log.d(TAG, "onResponse: " + jsonResponse);
                 body.close();
                 switch (response.code()) {
                     case 200:
-                        parseResponses(groupPosition, jsonResponse);
+                        _context.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                parseResponses(groupPosition, jsonResponse);
+                            }
+                        });
+
                         break;
                     default:
                         throw new IOException("getResponses failed with code " + response.code());
@@ -211,23 +230,40 @@ public class ExpandableResultsListAdapter extends BaseExpandableListAdapter {
             }
 
             int numResp = surveyItems.get(groupPosition).getNumResponses();
+            List<ResponseItem> responseItems = new ArrayList<ResponseItem>();
+
             // if question was open response, save all individual responses
             if(numResp < 2) {
-                child.put(header.get(groupPosition), responses);
+                for (int i = 0; i < responses.size(); i++) {
+                    responseItems.add(new ResponseItem(responses.get(i), 0));
+                }
+                child.put(header.get(groupPosition), responseItems);
             // else count the number of occurrences of each possible response
             } else {
                 for(int i = 0; i < numResp; i++) {
-                    int occurrences = Collections.frequency(responses, child.get(header.get(groupPosition)).get(i));
-                    Log.d(TAG, "parseResponses: NUMBER OF \"" + child.get(header.get(groupPosition)).get(i) + "\" = " + occurrences);
+                    String text = child.get(header.get(groupPosition)).get(i).responseText;
+                    int occurrences = Collections.frequency(responses, text);
+                    Log.d(TAG, "parseResponses: NUMBER OF \"" + text + "\" = " + occurrences);
+                    responseItems.add(new ResponseItem(text, occurrences));
                 }
-
+                child.put(header.get(groupPosition), responseItems);
             }
 
-            //notifyDataSetChanged();
+            notifyDataSetChanged();
         } catch (Exception e) {
             Log.d(TAG, "parseSurveyTitle: " + e);
         }
 
     }
 
+    static class ResponseItem {
+
+        String responseText;
+        int count;
+
+        public ResponseItem(String text, int cnt) {
+            responseText = text;
+            count = cnt;
+        }
+    }
 }

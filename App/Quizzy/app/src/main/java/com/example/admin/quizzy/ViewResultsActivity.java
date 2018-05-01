@@ -38,7 +38,7 @@ public class ViewResultsActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_results);
 
-        _surveyId = 32; //getIntent().getIntExtra("surveyid", SurveyItem.DEFAULT_ID);
+        _surveyId = getIntent().getIntExtra("surveyid", SurveyItem.DEFAULT_ID);
 
         expandableListView = (ExpandableListView) findViewById(R.id.resultsExpandableList);
 
@@ -46,8 +46,6 @@ public class ViewResultsActivity extends AppCompatActivity{
         expandableListView.setGroupIndicator(null);
 
         getSurvey(_surveyId);
-        //setItems();
-        setListener();
 
         FloatingActionButton returnButton = findViewById(R.id.returnButton);
         returnButton.setOnClickListener(new View.OnClickListener() {
@@ -153,54 +151,4 @@ public class ViewResultsActivity extends AppCompatActivity{
         expandableListView.setAdapter(_adapter);
     }
 
-    // Setting different listeners to expandablelistview
-    void setListener() {
-
-/*        // This listener will show toast on group click
-        expandableListView.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
-
-            @Override
-            public boolean onGroupClick(ExpandableListView listview, View view,
-                                        int group_pos, long id) {
-
-                Toast.makeText(ViewResultsActivity.this,
-                        "You clicked : " + _adapter.getGroup(group_pos),
-                        Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });*/
-
-        // This listener will expand one group at one time
-        // You can remove this listener for expanding all groups
-/*        expandableListView
-                .setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-
-                    // Default position
-                    int previousGroup = -1;
-
-                    @Override
-                    public void onGroupExpand(int groupPosition) {
-                        if (groupPosition != previousGroup)
-
-                            // Collapse the expanded group
-                            expandableListView.collapseGroup(previousGroup);
-                        previousGroup = groupPosition;
-                    }
-
-                });*/
-
-/*        // This listener will show toast on child click
-        expandableListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView listview, View view,
-                                        int groupPos, int childPos, long id) {
-                Toast.makeText(
-                        ViewResultsActivity.this,
-                        "You clicked : " + _adapter.getChild(groupPos, childPos),
-                        Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        });*/
-    }
 }
