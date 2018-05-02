@@ -14,7 +14,7 @@ def format_json(content):
             new_key = key
 
         if type(value) == str:
-            new_value = value.lower()
+            new_value = value
         else:
             new_value = value
 

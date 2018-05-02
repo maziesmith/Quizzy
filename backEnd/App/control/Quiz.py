@@ -109,19 +109,20 @@ def get_quiz_by_id_or_name(id):
 
     return json.dumps(full_quiz)
 
-@quiz.route("/quiz/all", methods =['POST'])
+@quiz.route("/quiz/all/owner", methods =['POST'])
 def mass_assignment():
 
     content = format_json(request.get_json())
 
-    # try:
-    user = User.get(User.id == content['userid'])
-    # except:
-    #     return Response(status = 404)
-
+    try:
+        user = User.get(User.id == content['userid'])
+    except:
+        return Response(status = 404)
     quiz = None
+    return_quiz = []
     # if the id is not in the json create the quiz this should not be the case the quiz will typically be gotten
     if 'id' not in content.keys():
+        pass
         # create the quiz name in the database 
         try:
             query = Quiz.select().where(Quiz.quizname == content['quizname'], Quiz.userid == user)
@@ -137,76 +138,150 @@ def mass_assignment():
         except:
             return Response(status = 416)
     else:
-        # try:
-        quiz = Quiz.get(Quiz.id == content['id'])
-        # except:
-        #     return Response(status = 404)
+        try:
+            quiz = Quiz.get(Quiz.id == content['id'])
+            if quiz.quizname != content['quizname']:
+                quiz.quizname = content['quizname']
+                try:
+                    quiz.save()
+                except:
+                    return Response(status = 403)
+        except:
+            return Response(status = 404)
 
 
     if quiz.published == False and int(user.id) == int(quiz.userid.id):
         # if the quiz is not published and the user is not the quiz maker 
+        # first items will be deleted
+        query = QuestionText.select().where(QuestionText.quizid == quiz.id)
+        query.execute()
+        all_questions = list(query)
+        request_questions = [x['text'] for x in content['questions']]
+        remove_this = []
 
-          for question in content['questions']:
-                qt = None
-            
-                if user.id == quiz.userid.id:
-                    #  if they are  they make change the questions 
-                    if 'id' not in question.keys():
-                        try:
-                            query = QuestionText.select().where(QuestionText.text == question['text'], QuestionText.quizid == quiz)
-                            query.execute()
-                            query = list(query)
+        for quest in all_questions:
+            if quest.text not in request_questions:
+                remove_this.append(quest)
 
-                            if len(query) == 0:                            
-                                qt = QuestionText(text = question['text'], quizid = quiz)
-                                qt.save()
-                            else:
-                                qt = query[0]
-                        except:
-                            return Response(status = 417)
-                    else:
-                        try:
-                            qt = QuestionText.get(QuestionText.id == question['id'])
-                            qt.text = question['text']
-                            qt.save()
-                        except:
-                            return Response(status = 404)
-                else:
-                    # if the user.id is not quiz.id then the question exists 
-                        try:
-                            qt = QuestionText.get(QuestionText.id == question['id'])
-                        except:
-                            return Response(status = 404)                    
+        for quest in remove_this:
+            try:
+                QuestionAnswer.delete().where(QuestionAnswer.questiontextid == quest.id).execute()            
+            except:
+                return Response(status = 433)
+            try:
+                QuestionText.delete().where(QuestionText.id == quest.id).execute()
+            except:
+                return Response(status = 423)
 
-                # anyone may make changes to their answers 
-                for answer in question['answers']:
-                    qa = None 
-                    query = []
+        for question in content['questions']:
+            qt = None
+        
+            if user.id == quiz.userid.id:
+                #  if they are  they make change the questions 
 
-                    if user.id != quiz.userid.id:
-                        query = QuestionAnswer.select().where(QuestionAnswer.user == user, QuestionAnswer.questiontextid == qt)
+                # then created 
+                if 'id' not in question.keys():
+                    try:
+                        query = QuestionText.select().where(QuestionText.text == question['text'], QuestionText.quizid == quiz)
                         query.execute()
                         query = list(query)
 
-                    if len(query) == 0:
-                        if 'id' not in answer.keys():
-                            try:
-                                qa = QuestionAnswer(text = answer['text'], user = user, questiontextid = qt)
-                                qa.save()
-                            except:
-                                return Response(status = 418)
+                        if len(query) == 0:                            
+                            qt = QuestionText(text = question['text'], quizid = quiz)
+                            qt.save()
                         else:
-                            try:
-                                qa = QuestionAnswer.get(QuestionAnswer.id == answer['id'])
-                                qa.text = answer['text']
-                                qa.save()
-                            except:
-                                return Response(status = 404)
-    else:
-        return Response(status = 403)
+                            qt = query[0]
+                    except:
+                        return Response(status = 417)
+                else:
+                    try:
+                        qt = QuestionText.get(QuestionText.id == question['id'])
+                        qt.text = question['text']
+                        qt.save()
+                    except:
+                        return Response(status = 404)
+            else:
+                # if the user.id is not quiz.id then the question exists 
+                    try:
+                        qt = QuestionText.get(QuestionText.id == question['id'])
+                    except:
+                        return Response(status = 404)                    
+
+            # anyone may make changes to their answers 
+            for answer in question['answers']:
+                qa = None 
+                query = []
+
+                if user.id != quiz.userid.id:
+                    query = QuestionAnswer.select().where(QuestionAnswer.user == user, QuestionAnswer.questiontextid == qt)
+                    query.execute()
+                    query = list(query)
+
+                if len(query) == 0:
+                    if 'id' not in answer.keys():
+                        try:
+                            qa = QuestionAnswer(text = answer['text'], user = user, questiontextid = qt)
+                            qa.save()
+                        except:
+                            return Response(status = 418)
+                    else:
+                        try:
+                            qa = QuestionAnswer.get(QuestionAnswer.id == answer['id'])
+                            qa.text = answer['text']
+                            qa.save()
+                        except:
+                            return Response(status = 404)
+
+    return Response(json.dumps(get_full_quizdb(quiz.id)))
 
 
-    return  json.dumps(get_full_quizdb(quiz.id))   
+@quiz.route("/quiz/all/guest", methods =['POST'])
+def inject_answers():
+    content = request.get_json()
+
+    # get quiz
+    try:
+        quiz = Quiz.get(Quiz.id == content['id'])
+    except:
+        return Response(status = 404)
+
+    # get user 
+    try:
+        user = User.get(User.id == content['userid'])
+    except:
+        return Response(status = 404)
+
+
+    # not the owner and quiz is published 
+    for question in content['questions']:
+        # get the questions
+        try:
+            qt = QuestionText.get(QuestionText.id == question['id'])
+        except:
+            return Response(status = 414)
+
+        for answer in question['answers']:
+            # if the answers does not have an id then make a full answer
+            user_answers = [x for x in QuestionAnswer.select().where(QuestionAnswer.user == user, QuestionAnswer.questiontextid == qt)]
+
+            if 'id' not in answer.keys() and len(user_answers) == 0:
+                try:
+                    qa = QuestionAnswer(text = answer['text'], user = user, questiontextid = qt)
+                    qa.save()
+                    return_answer = qa.to_dict()
+                except:
+                    return Response(status = 418)
+            elif 'id' not in answer.keys():
+                try:
+                    qa = user_answers[0]
+                    qa.text = answer['text']
+                    qa.save()
+                    return_answer = qa.to_dict()
+                except:
+                    return Response(status = 444)
+
+
+    return json.dumps(get_full_quizdb(quiz.id)) 
 
 
 @quiz.route('/quiz', methods=['PUT'])
@@ -261,7 +336,7 @@ def delete_full_quiz(id):
 
     return Response(status = 200)
 
-def get_full_quizdb(id):
+def get_full_quizdb(id, owner = True):
 
     got_quiz = None
     full_quiz = {}
@@ -273,10 +348,19 @@ def get_full_quizdb(id):
     
     for text in QuestionText.select().where(QuestionText.quizid == id):
         currenttext = text.to_dict()
+        if owner == True:
+            currenttext.update({"answers" : [answer.to_dict() for answer in QuestionAnswer.select().where(
+                QuestionAnswer.questiontextid == text.id, QuestionAnswer.user == got_quiz.userid)]})
+        else: 
+            currenttext.update({"answers" : [answer.to_dict() for answer in QuestionAnswer.select().where(
+                QuestionAnswer.questiontextid == text.id)]})
 
-        currenttext.update({"answers" : [answer.to_dict() for answer in QuestionAnswer.select().where(QuestionAnswer.questiontextid == text.id)]})
         questions.append(currenttext)
 
+    # questions.reverse()
+
+    questions = sorted(questions, key=lambda k: k['id'])         
+    
     full_quiz.update({"questions" : questions})
 
     return full_quiz

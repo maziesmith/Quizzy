@@ -18,9 +18,10 @@ def create_user():
     new_user.username = content.get("username")
     new_user.password = content.get("password")
     new_user.logged_in= True
+    
     try:
         new_user.save()
-    except IntegrityError:
+    except:
         return Response(status=409)
 
     return json.dumps(new_user.to_dict())
@@ -33,7 +34,7 @@ def login_user():
     content = format_json(request.get_json())
 
     try:
-        got_user = User.get(User.username == str(content['username']))
+        got_user = User.get(User.username.contains(str(content['username'])))
 
         if got_user.password == content['password'] and got_user.logged_in != True:
 
@@ -43,7 +44,7 @@ def login_user():
         else:
             return Response(status = 226)
 
-    except DoesNotExist:
+    except:
         return Response(status = 404)
 
 
@@ -57,7 +58,7 @@ def logout_user():
             got_user = User.get(User.id == str(content['id']))
 
         elif "username" in content.keys():
-            got_user = User.get(User.username == str(content['username']))
+            got_user = User.get(User.username.contains((content['username'])))
 
         if got_user.logged_in == True:
 
@@ -77,7 +78,10 @@ def logout_user():
 
 @user.route('/user', methods=['GET'])
 def get_all_users():
-    return json.dumps([user.to_dict() for user in User.select()])
+    query = User.select()
+    query.execute()
+    query = list(query)
+    return json.dumps([x.to_dict() for x in query])
 
 @user.route('/user/<id>', methods=['GET'])
 def get_by_id(id):
@@ -85,7 +89,7 @@ def get_by_id(id):
         got_user = User.get(User.id == id)
         return json.dumps(got_user.to_dict())
 
-    except DoesNotExist:
+    except:
         return Response(status = 404)
 
 @user.route('/user/<key>=<value>', methods=['GET'])
