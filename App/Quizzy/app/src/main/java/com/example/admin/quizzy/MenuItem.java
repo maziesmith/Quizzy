@@ -9,10 +9,13 @@ public class MenuItem {
     private int id;
     private String quizname;
     private int userid;
+    private Boolean published;
 
-    public MenuItem(String quizname, int surveyid) {
+    public MenuItem(String quizname, int surveyid, int userid, Boolean published) {
         this.quizname = quizname;
         this.id = surveyid;
+        this.userid = userid;
+        this.published = published;
     }
 
     public String getSurveyName(){
@@ -25,6 +28,10 @@ public class MenuItem {
 
     public int getUserId(){
         return userid;
+    }
+
+    public Boolean isPublished() {
+        return published;
     }
 
 

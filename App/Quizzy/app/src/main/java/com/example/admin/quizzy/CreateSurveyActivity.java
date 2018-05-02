@@ -1,6 +1,7 @@
 package com.example.admin.quizzy;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -18,7 +19,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import java.io.IOException;
 import java.util.ArrayList;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by Admin on 3/19/2018.
@@ -30,11 +46,17 @@ public class CreateSurveyActivity extends AppCompatActivity
     private SurveyItemAdapter _adapter;
     private RetainedFragment _dataFragment;
     private static final String TAG_RETAINED_FRAGMENT = "RetainedFragment";
+    private static final String TAG = "Quizzy_CreateQuizDebug";
+    private int _surveyId;
+
+    private final OkHttpClient client = new OkHttpClient();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_survey);
+
+        _surveyId = getIntent().getIntExtra("surveyid", SurveyItem.DEFAULT_ID);
 
         FragmentManager fm = getSupportFragmentManager();
         _dataFragment = (RetainedFragment)fm.findFragmentByTag(TAG_RETAINED_FRAGMENT);
@@ -42,6 +64,7 @@ public class CreateSurveyActivity extends AppCompatActivity
             _dataFragment = new RetainedFragment();
             fm.beginTransaction().add(_dataFragment, TAG_RETAINED_FRAGMENT).commit();
             _dataFragment.setData(new ArrayList<SurveyItem>());
+            getSurvey(_surveyId);
         }
 
         _adapter = new SurveyItemAdapter(this, _dataFragment.getData());
@@ -58,14 +81,62 @@ public class CreateSurveyActivity extends AppCompatActivity
             }
         });
 
+        FloatingActionButton cancelButton = findViewById(R.id.surveyCancelButton);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
         FloatingActionButton saveButton = findViewById(R.id.surveySaveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(CreateSurveyActivity.this, "Save Successful:\n\n" + dataToJson(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(CreateSurveyActivity.this, "Save Successful:\n\n" + dataToJson(), Toast.LENGTH_LONG).show();
                 Log.i("SAVING", "onClick: " + dataToJson());
-            }
-        });
+
+                RequestBody body = RequestBody.create(MediaType.parse("application/json"), dataToJson());
+                Request request = new Request.Builder()
+                        .url("http://quizzybackend.herokuapp.com/quiz/all/owner")
+                        .post(body)
+                        .addHeader("Content-Type", "application/json")
+                        .addHeader("Cache-Control", "no-cache")
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
+                    @Override
+                    public void onFailure(Call call, IOException e) {
+                        Log.d(TAG, "onSurveyFailure: " + e);
+                    }
+
+                    @Override
+                    public void onResponse(Call call, Response response) throws IOException {
+                        ResponseBody returnedBody = response.body();
+                        String jsonResponse = returnedBody.string();
+                        Log.d(TAG, "onResponse: " + jsonResponse);
+                        returnedBody.close();
+                        switch (response.code()) {
+                            case 200:
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(CreateSurveyActivity.this, "Save Successful", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                            break;
+                            default:
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(CreateSurveyActivity.this, "Save Failed", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                throw new IOException("Saving survey failed with code " + response.code());
+                        }
+                    }
+                });
+            }  // onClick
+        });  // setOnClickListener
     }
 
     @Override
@@ -129,8 +200,14 @@ public class CreateSurveyActivity extends AppCompatActivity
         String jsonString = "{";
 
         TextView titleView = (TextView)findViewById(R.id.surveyEditTitle);
-        jsonString += "\"title\": " + "\"" + titleView.getText().toString() + "\",";
-        jsonString += "\"items\": [";
+        jsonString += "\"id\": " + _surveyId + ",";
+        jsonString += "\"quizname\": " + "\"" + titleView.getText().toString() + "\",";
+
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
+        int userid = prefs.getInt("userid", SurveyItem.DEFAULT_ID);
+        jsonString += "\"userid\": " + userid + ",";
+        jsonString += "\"questions\": [";
 
         ArrayList<SurveyItem> items = _adapter.getData();
         for(int i = 0; i < items.size(); i++) {
@@ -143,6 +220,96 @@ public class CreateSurveyActivity extends AppCompatActivity
 
         jsonString += "}";
         return jsonString;
+    }
+
+    private void getSurvey(int id) {
+        Request request = new Request.Builder()
+                .url("http://quizzybackend.herokuapp.com/quiz/" + id)
+                .get()
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Log.d(TAG, "onSurveyFailure: " + e);
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                ResponseBody body = response.body();
+                String jsonResponse = body.string();
+                Log.d(TAG, "onResponse: " + jsonResponse);
+                body.close();
+                switch (response.code()) {
+                    case 200:
+                        final ArrayList<SurveyItem> data = parseSurvey(jsonResponse);
+                        final String title = parseSurveyTitle(jsonResponse);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                _dataFragment.setData(data);
+                                _adapter.addAll(data);
+                                EditText titleView = (EditText) findViewById(R.id.surveyEditTitle);
+                                titleView.setText(title);
+                            }
+                        });
+                        break;
+                    default:
+                        throw new IOException("getSurvey failed with code " + response.code());
+                }
+            }
+        });
+
+    }
+
+    private String parseSurveyTitle(String json) {
+        String title = "";
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject fullJson = parser.parse(json).getAsJsonObject();
+            title = fullJson.getAsJsonPrimitive("quizname").getAsString();
+
+        } catch (Exception e) {
+            Log.d(TAG, "parseSurveyTitle: " + e);
+        }
+
+        return title;
+    }
+
+    private ArrayList<SurveyItem> parseSurvey(String json) {
+        ArrayList<SurveyItem> surveyItems = new ArrayList<SurveyItem>();
+
+        JsonParser parser = new JsonParser();
+        try {
+            JsonObject fullJson = parser.parse(json).getAsJsonObject();
+            // Find the array of survey questions in the json
+            JsonArray itemsArray = fullJson.getAsJsonArray("questions");
+
+            // Build a SurveyItem from each array element
+            for (int i = 0; i < itemsArray.size(); i++) {
+                JsonObject item = itemsArray.get(i).getAsJsonObject();
+                int questionId = item.getAsJsonPrimitive("id").getAsInt();
+                String questionText = item.getAsJsonPrimitive("text").getAsString();
+                JsonArray responseArray = item.getAsJsonArray("answers");
+
+                String[] questionResponses = new String[responseArray.size()];
+                int[] responseIds = new int[responseArray.size()];
+                for (int j = 0; j < responseArray.size(); j++) {
+                    JsonObject response = responseArray.get(j).getAsJsonObject();
+                    String responseText = response.getAsJsonPrimitive("text").getAsString();
+                    int responseId = response.getAsJsonPrimitive("id").getAsInt();
+                    questionResponses[j] = responseText;
+                    responseIds[j] = responseId;
+                }
+
+                SurveyItem newItem = new SurveyItem(questionText, questionResponses, questionId, responseIds);
+                surveyItems.add(newItem);
+            }
+
+        } catch (Exception e) {
+            Log.d(TAG, "parseSurvey: " + e);
+        }
+
+        return surveyItems;
     }
 
 

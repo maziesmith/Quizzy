@@ -11,12 +11,19 @@
     <string name="Login">Log In</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
-    <string name="signup_reminder_string">Create an account</string>
-    <string name="email">Email</string>
+    <string name="signup_reminder_string">No account? <u>Create one</u>.</string>
     <string name="name">Name</string>
     <string name="create_account">Create Account</string>
-    <string name="already_a_member_log_in">Already a member? Log in</string>
+    <string name="already_a_member_log_in">Already a member? <u>Log in</u>.</string>
     <string name="edit">edit</string>
     <string name="delete">delete</string>
     <string name="log_out">Log Out</string>
+    <string name="my_surveys">My Surveys</string>
+    <string name="published_surveys">Published Surveys</string>
+    <string name="username">Username</string>
+    <string name="refresh">Refresh</string>
+    <string name="add_a_survey">Add a survey</string>
+    <string name="take_survey">take survey</string>
+    <string name="publish">publish</string>
+    <string name="analyze">analyze</string>
 </resources>

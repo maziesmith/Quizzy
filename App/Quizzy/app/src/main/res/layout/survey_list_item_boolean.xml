@@ -21,7 +21,7 @@
             android:id="@+id/question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:inputType="text|textCapSentences"
             android:hint="@string/question_hint"
             android:textStyle="italic"
             android:textAppearance="?android:textAppearanceSmall" />
@@ -38,14 +38,14 @@
                 android:id="@+id/response1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="text|textCapSentences"
                 android:hint="@string/response_hint"
                 android:textAppearance="?android:textAppearanceSmall"/>
             <EditText
                 android:id="@+id/response2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="text"
+                android:inputType="text|textCapSentences"
                 android:hint="@string/response_hint"
                 android:textAppearance="?android:textAppearanceSmall"/>
         </LinearLayout>

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -13,6 +15,16 @@
         android:paddingRight="@dimen/activity_horizontal_padding"
         android:paddingTop="@dimen/activity_vertical_padding">
 
+        <TextView
+            android:id="@+id/app_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/app_name"
+            android:fontFamily="@font/pacifico"
+            android:textSize="56sp"
+            android:gravity="center_horizontal"
+            android:textColor="@color/colorAccent2"/>
+
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,10 +32,10 @@
             android:layout_marginTop="@dimen/edittext_vertical_padding">
 
             <EditText
-                android:id="@+id/input_email"
+                android:id="@+id/input_username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="@string/email"
+                android:hint="@string/username"
                 android:inputType="textEmailAddress" />
         </android.support.design.widget.TextInputLayout>
 

@@ -1,28 +1,30 @@
 package com.example.admin.quizzy;
 
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.os.Handler;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.View;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonDataException;
 import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Types;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -31,110 +33,73 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
 /**
  * Created by probu on 3/20/2018.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MenuLoader{
+    private static final String TAG = "Quizzy_MainDebug";
     // for okhttp3 requests
     private final OkHttpClient client = new OkHttpClient();
     private final Moshi moshi = new Moshi.Builder().build();
 
-    // bind views
-    @BindView(R.id.logoutButton) Button _logoutButton;
-    @BindView(R.id.addSurveyButton) Button _addSurveyButton;
+    // binds
+    @BindView(R.id.mainMenuPager)
+    ViewPager mainManuPager;
+
+    @BindView(R.id.mainMenuLogoutButton)
+    Button _logoutButton;
+
+    @BindView(R.id.mainMenuUsernameView)
+    TextView _usernameView;
+
+    @OnClick(R.id.mainMenuRefreshButton)
+    public void refreshUI(){
+        finish();
+        overridePendingTransition(0, 0);
+        startActivity(getIntent());
+        overridePendingTransition(0, 0);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        // Create a list of surveys
-        final ArrayList<MenuItem> menuItems = new ArrayList<>();
-
-        // fill the menuItems list with stuff
-        populate(menuItems);
-
-        // Create the adapter
-        MenuItemAdapter adapter = new MenuItemAdapter(MainActivity.this, menuItems);
-
-        // bind the view
-        ListView _listView = (ListView) findViewById(R.id.menuList);
-
-        // set adapter for listview
-        _listView.setAdapter(adapter);
-
-        // set logout onclick
-        _logoutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                logOut();
-            }
-        });
-
-        _addSurveyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addSurvey();
-            }
-        });
-
-
+    public void onRestart() {
+        super.onRestart();
+        refreshUI();
     }
 
-    public MainActivity() {
-        // Required empty public constructor
+    @Override
+    public void onSurveySuccess() {
+        finish();
+        startActivity(getIntent());
     }
 
-    public void populate(final ArrayList<MenuItem> m){
-        Request request = new Request.Builder()
-                .url("http://quizzybackend.herokuapp.com/quiz/all")
-                .get()
-                .addHeader("Cache-Control", "no-cache")
-                .addHeader("Postman-Token", "4226f3f9-8f85-46ee-a56a-158129333908")
-                .build();
-        // makes an asynchronous call for network io
-        client.newCall(request)
-                .enqueue(new Callback() {
-                    @Override
-                    public void onFailure(final Call call, IOException e) {
-                        // Error
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // main thread stuff here
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(Call call, final Response response) throws IOException {
-                        try {
-                            // turns a json string into an arraylist of menuitems to be inflated
-                            String res = response.body().string();
-                            Type listMenuItem = Types.newParameterizedType(List.class, MenuItem.class);
-                            JsonAdapter<List<MenuItem>> adapter = moshi.adapter(listMenuItem);
-                            m.addAll(adapter.fromJson(res));
-                        } catch(IOException ignored){
-                        } catch(JsonDataException ignored) {
-                        }
-                    }
-                });
+    @Override
+    public void onSurveyFailure() {
+        finish();
+        startActivity(getIntent());
     }
 
-    private void logOut(){
+    @OnClick(R.id.mainMenuLogoutButton)
+    public void logOut(){
         OkHttpClient client = new OkHttpClient();
 
         MediaType mediaType = MediaType.parse("application/json");
 
-        // get email to log out
-        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-        final String email = pref.getString("username", null);
+        _logoutButton.setEnabled(false);
+
+        // create ProgressDialog when logging in
+        final ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Logging out...");
+        progressDialog.show();
+
+        // get username to log out
+        final String username = getUsername();
 
         RequestBody body = RequestBody.create(mediaType, "{\n\t\"username\" : \"" +
-                email +
+                username +
                 "\"}");
-
 
         Request request = new Request.Builder()
                 .url("http://quizzybackend.herokuapp.com/user/logout")
@@ -153,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                // main thread stuff here
+                                logoutFailed(progressDialog);
                             }
                         });
                     }
@@ -161,118 +126,132 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(Call call, final Response response) throws IOException {
                         try {
-                            String res = response.body().string();
-
-                            // use moshi to turn it into an object for easy access
-                            JsonAdapter<logoutResponse> jsonAdapter = moshi.adapter(logoutResponse.class);
-                            // throws JsonDataException if it doesn't fit in response class
-                            logoutResponse l = jsonAdapter.fromJson(res);
-                            if(l != null && !l.logged_in){
-                                // write email and logged in flag to shared pref
-                                SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-                                SharedPreferences.Editor editor = pref.edit();
-                                editor.putBoolean("logged_in", false);
-                                editor.apply();
-
-                                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                                startActivity(intent);
-
+                            logoutResponse l = parseResponse(response);
+                            if(!l.logged_in){
+                                logoutSuccess(progressDialog);
                             }
-                        } catch (JsonDataException ignored) {
-                        } catch (IOException ignored) {
+                        } catch (Exception e){
+                            Log.d(TAG, "Exception: " + e);
+                            logoutFailed(progressDialog);
                         }
                     }
                 });
     }
 
-    static class logoutResponse{
-        public int id;
-        public String username;
-        public Boolean logged_in;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // bind everything
+        ButterKnife.bind(this);
+
+        //if not logged in, go to loginactivity
+        if(!loggedIn()){
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+        }
+
+        //set username view
+        String username = getUsername();
+        _usernameView.setText(username);
+
+        // set up viewpager
+        SurveyFragmentAdapter adapter = new SurveyFragmentAdapter(this, getSupportFragmentManager());
+        mainManuPager.setAdapter(adapter);
     }
 
-    private void addSurvey(){
+    @Override
+    public void onBackPressed() {
+        // disable going back to the menu
+        moveTaskToBack(true);
+    }
+
+    String getUsername(){
         SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
-        final int userid = pref.getInt("userid", 0);
-
-        // this is a datetime string to make sure quiz names are unique
-        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date now = new Date();
-        String date = sdfDate.format(now);
-
-        MediaType mediaType = MediaType.parse("application/json");
-        RequestBody body = RequestBody.create(mediaType, "{\n\t\"quizname\" : \"" +
-                "New Quiz " +
-                date +
-                "\",\n\t\"userid\" : \"" +
-                 userid +
-                "\"\n}");
-        Request request = new Request.Builder()
-                .url("http://quizzybackend.herokuapp.com/quiz")
-                .post(body)
-                .addHeader("Content-Type", "application/json")
-                .addHeader("Cache-Control", "no-cache")
-                .addHeader("Postman-Token", "d6970e83-6404-4cc1-b2cf-e3a0738c07b3")
-                .build();
-
-        client.newCall(request)
-                .enqueue(new Callback() {
-                    @Override
-                    public void onFailure(final Call call, IOException e) {
-                        // Error
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                // main thread stuff here
-                                addFailed();
-                            }
-                        });
-                    }
-
-                    @Override
-                    public void onResponse(Call call, final Response response) {
-                        try {
-                            String res = response.body().string();
-                            // use moshi to turn it into an object for easy access
-                            JsonAdapter<addSurveyResponse> jsonAdapter = moshi.adapter(addSurveyResponse.class);
-                            // throws JsonDataException if it doesn't fit in response class
-                            final addSurveyResponse a = jsonAdapter.fromJson(res);
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    // main thread stuff here
-                                    Intent intent = new Intent(MainActivity.this, CreateSurveyActivity.class);
-                                    intent.putExtra("surveyid", a.id);
-                                    intent.putExtra("surveyname", a.quizname);
-                                    MainActivity.this.startActivity(intent);
-                                }
-                            });
-                        } catch (JsonDataException ignored) {
-                            addFailed();
-                        } catch (IOException ignored) {
-                            addFailed();
-                        }
-                    }
-                });
-
+        return pref.getString("username", null);
     }
 
-    private void addFailed(){
+    // look in shareprefs for logged_in
+    Boolean loggedIn(){
+        SharedPreferences prefs = getApplicationContext().getSharedPreferences(
+                "quizzy.pref", Context.MODE_PRIVATE);
+        return prefs.getBoolean("logged_in", false);
+    }
+
+    void setLogged_In(Boolean logged_in){
+        // write email and logged in flag to shared pref
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("quizzy.pref", 0);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("logged_in", logged_in);
+        editor.apply();
+    }
+
+    logoutResponse parseResponse(Response response) throws Exception {
+        int code = response.code();
+        Log.d(TAG, "Response is code " + code);
+        JsonParser parser = new JsonParser();
+        if(code == 200) {
+            Log.d(TAG, "Code " + code + "means we parse JSON");
+            // turn our result into a string
+            String res = response.body().string();
+            Log.d(TAG, "Response is " + res);
+            JsonObject json = parser.parse(res).getAsJsonObject();
+            Log.d(TAG, "Parsed json");
+            return new logoutResponse(code, json.get("id").getAsInt(),
+                    json.get("username").getAsString(), json.get("logged_in").getAsBoolean());
+        } else {
+            Log.d(TAG, "Code was not 200");
+            return new logoutResponse(code, 0, "", false);
+        }
+    }
+
+    void logoutSuccess(final ProgressDialog progressDialog) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("Failed to create survey.");
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                final Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                    progressDialog.dismiss();
+                    _logoutButton.setEnabled(true);
+                    Log.d(TAG, "sending us from mainactivity to login");
+                    setLogged_In(false);
+                    Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                    }
+                }, 1500);
             }
         });
     }
 
-    static class addSurveyResponse {
-        String quizname;
-        int userid;
-        int id;
+    void logoutFailed(final ProgressDialog progressDialog) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Log out fail");
+                progressDialog.dismiss();
+                Toast.makeText(getBaseContext(), "Logout failed", Toast.LENGTH_LONG).show();
+                _logoutButton.setEnabled(true);
+            }
+        });
+
     }
+
+    static class logoutResponse{
+        int code;
+        int userid;
+        String username;
+        Boolean logged_in;
+        logoutResponse(int code, int userid, String username, Boolean logged_in){
+            this.code=code;
+            this.userid=userid;
+            this.username=username;
+            this.logged_in=logged_in;
+        }
+    }
+
+
 
 }

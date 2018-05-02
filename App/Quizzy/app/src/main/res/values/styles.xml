@@ -5,7 +5,9 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/colorAccent2</item>
+        <item name="android:colorBackground">@color/colorDarkBackground</item>
+        <item name="android:windowBackground">@color/colorDarkBackground</item>
     </style>
 
     <style name="AppTheme.Picker" parent="@android:style/Theme.Holo.Light">

@@ -20,7 +20,7 @@
             android:id="@+id/question"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="text"
+            android:inputType="text|textCapSentences"
             android:hint="@string/question_hint"
             android:textStyle="italic"
             android:textAppearance="?android:textAppearanceSmall" />

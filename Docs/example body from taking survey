@@ -1,0 +1,64 @@
+This is the body I'm sending to /quiz/all 
+The context is that the quiz with id 32 has been published by user with id 10, and is now being taken by user with id 23.
+The body is similar to what I send for updating a quiz, except each question only contains the answer given by user 23.
+I currently get a 403 response. 
+
+{
+  "id": 32,
+  "quizname": "survey about colors",
+  "userid": 10,
+  "questions": [
+    {
+      "id": 20,
+      "text": "What is your favorite color?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 45,
+          "text": "Wouldn't you like to know",
+          "user": 23,
+          "questiontextid": 20
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "text": "What color do you like best on a car?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 47,
+          "text": "Blue",
+          "user": 23,
+          "questiontextid": 21
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "text": "Do you like the color yellow?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 52,
+          "text": "No",
+          "user": 23,
+          "questiontextid": 22
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "text": "What color means stop?",
+      "quizid": 32,
+      "answers": [
+        {
+          "id": 81,
+          "text": "Green",
+          "user": 23,
+          "questiontextid": 37
+        }
+      ]
+    }
+  ]
+}
